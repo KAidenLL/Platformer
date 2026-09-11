@@ -139,6 +139,11 @@
   .mini-help summary::-webkit-details-marker{ display:none; }
   .mini-help summary::before{ content:"?"; display:inline-flex; align-items:center; justify-content:center; width:16px; height:16px; border-radius:50%; background:var(--accent-soft); color:var(--accent-ink); font-size:11px; font-weight:700; font-family:"IBM Plex Mono", monospace; }
   .mini-help p{ margin:8px 0 0; font-size:13.5px; line-height:1.55; color:var(--ink-soft); background:var(--panel); border-left:2px solid var(--line-strong); border-radius:0 8px 8px 0; padding:10px 14px; }
+  .mini-help p strong{ color:var(--ink); }
+
+  .screening-tip{ background:var(--panel); border-left:2px solid var(--line-strong); border-radius:0 10px 10px 0; padding:18px 22px; font-size:14.5px; line-height:1.65; color:var(--ink-soft); margin:40px 0 -12px; }
+  .screening-tip strong{ color:var(--ink); }
+  @media (max-width:640px){ .screening-tip{ padding:16px 18px; } }
 
   .field input[type="text"], .field input[type="number"], .field textarea{
     width:100%; border:1.5px solid var(--line-strong); border-radius:12px; background:#fff; color:var(--ink);
@@ -317,6 +322,9 @@
   <div id="form-start"></div>
 
   <div class="wrap">
+    <div class="screening-tip reveal">
+      <strong>How to fill this in:</strong> Start with the CV, then close the gaps in a short call or interview — ask the candidate to walk you through one real project in their own words. Every tricky question below has a "?" you can open for plain-language guidance, including exactly what to ask. If you genuinely can't tell after that, pick "Not sure" rather than guessing — the tool accounts for missing information and tells you when it has too little to be confident, rather than quietly guessing on your behalf. This works the same way whether you're a recruiter, a hiring manager, or the candidate screening themselves.
+    </div>
     <div class="step-row reveal">
       <div class="step-label">
         <span class="n">STEP 01</span>
@@ -391,43 +399,53 @@
         <div class="field">
           <span class="fake-label">Kubernetes experience</span>
           <div class="help">Driver vs. mechanic — deploying it vs. running it.</div>
-          <details class="mini-help"><summary>What's Kubernetes?</summary>
-            <p>Software that runs and looks after many programs at once. A "cluster" is the group of computers it manages.</p>
+          <details class="mini-help"><summary>How do I tell from a CV or a chat?</summary>
+            <p>Software that runs and looks after many programs at once. A "cluster" is the group of computers it manages. <strong>Signals of "manages clusters":</strong> cluster upgrades, permissions/RBAC, autoscaling, writing custom Kubernetes tooling (operators/CRDs), being on-call for cluster problems. <strong>Signals of "deploys apps only":</strong> "deployed our app to Kubernetes", "used kubectl to release", no mention of who built or looks after the cluster itself. <strong>Ask this:</strong> "Who sets up and maintains your Kubernetes clusters — is that you, or a separate team you just deploy to?"</p>
           </details>
           <div class="tiles" data-group="k8s">
             <button type="button" class="tile" data-value="none"><span class="dot"></span>Hasn't used it, or not mentioned</button>
             <button type="button" class="tile" data-value="basic"><span class="dot"></span>Deploys apps, doesn't manage it</button>
             <button type="button" class="tile" data-value="advanced"><span class="dot"></span>Manages clusters — automation, permissions, upgrades</button>
+            <button type="button" class="tile" data-value="unsure"><span class="dot"></span>Not sure yet</button>
           </div>
         </div>
         <div class="field">
           <span class="fake-label">Does their career read as ops, or as platform?</span>
           <div class="help">This can override raw tool depth — read it carefully.</div>
-          <details class="mini-help"><summary>Why does this matter so much?</summary>
-            <p>Even genuine, hands-on Kubernetes work can still read as "ops" if the surrounding career is general infrastructure admin (tickets, monitoring, on-call support) rather than building something other engineering teams use on their own. Hiring panels have declined technically competent CVs on this basis alone.</p>
+          <details class="mini-help"><summary>How do I tell from a CV or a chat?</summary>
+            <p>Even genuine, hands-on Kubernetes work can still read as "ops" if the surrounding career is general infrastructure admin (tickets, monitoring, on-call support) rather than building something other engineering teams use on their own. Hiring panels have declined technically competent CVs on this basis alone. <strong>Platform signals:</strong> "built a tool/portal/pipeline other teams use", "self-service", "developers can now provision X themselves", a named internal platform or framework they created. <strong>Ops signals:</strong> "responded to incidents", "monitored and maintained systems", "resolved tickets", "kept things running", nothing reusable that others use on their own. <strong>Ask this:</strong> "Tell me about something you built that other engineers or teams use on their own, without needing you involved each time." A specific, confident answer points to platform; a vague one, or a story about fixing and monitoring things, points to ops.</p>
           </details>
           <div class="tiles" data-group="opsPlatform">
             <button type="button" class="tile" data-value="ops"><span class="dot"></span>Ops-flavored — tickets, monitoring, infra admin, production support</button>
             <button type="button" class="tile" data-value="mixed"><span class="dot"></span>Mixed — some of both</button>
             <button type="button" class="tile" data-value="platform"><span class="dot"></span>Platform-flavored — designs and builds capability other teams self-serve from</button>
+            <button type="button" class="tile" data-value="unsure"><span class="dot"></span>Not sure yet</button>
           </div>
         </div>
         <div class="field">
           <span class="fake-label">Infrastructure-as-code (e.g. Terraform)</span>
           <div class="help">Builds infrastructure with code, not clicks.</div>
+          <details class="mini-help"><summary>How do I tell from a CV or a chat?</summary>
+            <p>"Infrastructure-as-code" means writing files that describe servers, networks and databases so a tool builds them automatically — the opposite of clicking around a cloud console by hand. <strong>Strong:</strong> named tools like Terraform, Pulumi or CloudFormation used for real environments, reusable modules they wrote themselves, mentions of "state" or "Terragrunt". <strong>Some:</strong> has worked inside an existing setup someone else designed. <strong>Ask this:</strong> "If you needed a new server or database tomorrow, would you write it in code, or set it up by hand in the console?"</p>
+          </details>
           <div class="tiles cols-3" data-group="iac">
             <button type="button" class="tile" data-value="none"><span class="dot"></span>None</button>
             <button type="button" class="tile" data-value="some"><span class="dot"></span>Some</button>
             <button type="button" class="tile" data-value="strong"><span class="dot"></span>Strong, hands-on</button>
+            <button type="button" class="tile" data-value="unsure" style="grid-column:1/-1;"><span class="dot"></span>Not sure yet</button>
           </div>
         </div>
         <div class="field">
           <span class="fake-label">Cloud platform depth (AWS / Azure / GCP)</span>
           <div class="help">Basic: launches servers. Deep: networking, security, multi-account.</div>
+          <details class="mini-help"><summary>How do I tell from a CV or a chat?</summary>
+            <p><strong>Deep:</strong> designs how multiple accounts or projects are structured and secured, sets up networking between them, manages identity and access permissions, or works on cutting cloud costs. <strong>Basic:</strong> can launch a server or storage bucket but hasn't touched networking, security or account structure. <strong>Ask this:</strong> "Have you worked on things like networking, permissions, or how different accounts talk to each other — or mainly just launched individual servers or storage?"</p>
+          </details>
           <div class="tiles cols-3" data-group="cloud">
             <button type="button" class="tile" data-value="none"><span class="dot"></span>None</button>
             <button type="button" class="tile" data-value="basic"><span class="dot"></span>Basic</button>
             <button type="button" class="tile" data-value="deep"><span class="dot"></span>Deep</button>
+            <button type="button" class="tile" data-value="unsure" style="grid-column:1/-1;"><span class="dot"></span>Not sure yet</button>
           </div>
         </div>
         <div class="field">
@@ -442,9 +460,9 @@
         </div>
         <div class="field">
           <span class="fake-label">Built self-service tools for other engineers?</span>
-          <div class="help">The strongest signal of senior platform work.</div>
-          <details class="mini-help"><summary>What's a "self-service platform"?</summary>
-            <p>Tools that let engineers get what they need — a server, a pipeline — on their own, without a specialist each time.</p>
+          <div class="help">The strongest signal of senior platform work — this one answer carries a lot of weight, so it's worth pinning down properly.</div>
+          <details class="mini-help"><summary>How do I tell from a CV or a chat?</summary>
+            <p>A self-service platform is anything that lets other engineers get what they need — a server, a pipeline, a database, a whole new environment — on their own, without asking a specialist each time. It doesn't have to use the words "self-service" on the CV. <strong>Signals it counts:</strong> "built a portal/framework/module other teams use", "developers can now provision X themselves", "cut onboarding from days to minutes", a named internal platform, template or "golden path". Being the sole person who built a company's infrastructure from scratch usually counts too, even without that exact phrasing. <strong>Signals it doesn't:</strong> maintaining a platform someone else designed, or setting things up manually on request each time. <strong>Ask this:</strong> "If another engineer needs a new server, pipeline or environment, do they come to you and you set it up, or can they get it themselves using something you built?" If they describe something concrete that others use on their own, choose "Yes" — don't default to "Not sure" just because the CV doesn't use this exact term.</p>
           </details>
           <div class="pillgroup" data-group="selfservice">
             <button type="button" class="pill" data-value="yes">Yes</button>
@@ -455,6 +473,9 @@
         <div class="field">
           <span class="fake-label">Modern platform tooling (GitOps and similar)</span>
           <div class="help">ArgoCD, Helm, Crossplane, custom Kubernetes tooling.</div>
+          <details class="mini-help"><summary>What are these, in plain terms?</summary>
+            <p>These are toolkits that make running Kubernetes and cloud infrastructure more automated and less manual. You don't need to understand how each one works — just check whether any of these names (or similar ones) show up on the CV or come up when you ask: ArgoCD, Flux, GitOps, Helm, Crossplane, Kustomize, Backstage. "A little" fits one or two mentioned in passing; "Yes" fits real hands-on use of several.</p>
+          </details>
           <div class="pillgroup" data-group="tooling">
             <button type="button" class="pill" data-value="yes">Yes</button>
             <button type="button" class="pill" data-value="some">A little</button>
@@ -475,7 +496,7 @@
           <span class="fake-label">Do they show real investigative curiosity?</span>
           <div class="help">The single biggest factor in most platform-team hiring decisions — bigger than any tool on the CV.</div>
           <details class="mini-help"><summary>What does "real curiosity" look like?</summary>
-            <p>When something breaks or is unfamiliar, do they dig in — read the docs or source, test a hypothesis, tinker at home — rather than take the easiest path and stop? A junior with no production experience but this trait is worth more than a senior without it. Look for home-lab tinkering, researching a technology unprompted, or explaining <em>why</em> they chose an approach, not just that it worked.</p>
+            <p>When something breaks or is unfamiliar, do they dig in — read the docs or source, test a hypothesis, tinker at home — rather than take the easiest path and stop? A junior with no production experience but this trait is worth more than a senior without it. Look for home-lab tinkering, researching a technology unprompted, or explaining <em>why</em> they chose an approach, not just that it worked. <strong>Ask this:</strong> "Tell me about a time something broke and you didn't know why — what did you actually do?" A mechanical answer ("I restarted it" / "I asked someone else") points to no; a specific story of digging in themselves points to yes.</p>
           </details>
           <div class="pillgroup" data-group="curiosity">
             <button type="button" class="pill" data-value="yes">Yes, clearly</button>
@@ -801,17 +822,19 @@
     }
 
     if(d.opsPlatform === 'platform'){ raw += 1; strengths.push('Career reads as platform-flavored — builds capability other teams self-serve from.'); }
-    else if(d.opsPlatform === null || d.opsPlatform === undefined){ missing.push('Ops-vs-platform read wasn\'t specified.'); }
+    else if(d.opsPlatform === null || d.opsPlatform === undefined || d.opsPlatform === 'unsure'){ missing.push('Ops-vs-platform read wasn\'t specified.'); }
 
     const maxRaw = 16.5;
     let score = (raw / maxRaw) * 10;
 
     // role-stream gate — curious candidates aren't held to the same
     // self-service-evidence ceiling; potential matters more than checklist completeness
-    if(d.stream === 'platform' && d.selfservice !== 'yes'){
-      const selfserviceCap = strict ? (d.curiosity === 'yes' ? 6.5 : 6) : 6.5;
-      score = Math.min(score, selfserviceCap);
-      concerns.push('Platform Engineer is the strictest stream — without confirmed self-service/platform-building work, this caps as a strong-junior profile at best.');
+    if(d.stream === 'platform'){
+      if(d.selfservice !== 'yes'){
+        const selfserviceCap = strict ? (d.curiosity === 'yes' ? 6.5 : 6) : 6.5;
+        score = Math.min(score, selfserviceCap);
+        concerns.push('Platform Engineer is the strictest stream — without confirmed self-service/platform-building work, this caps as a strong-junior profile at best.');
+      }
     } else if(d.stream === 'cloud'){
       if(d.cloud === 'deep') score = Math.min(10, score + 1);
     } else if(d.stream === 'devops'){
