@@ -1,1021 +1,723 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Platform Fit Check</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=Instrument+Serif:ital@1&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
 <style>
   :root{
     --bg:#FFFFFF;
-    --panel:#F6F5F0;
-    --line:#E9E8E2;
-    --line-strong:#D7D5C8;
-    --ink:#0E0E0C;
-    --ink-soft:#68675F;
-    --ink-faint:#A6A49A;
-    --accent:#FF5A1F;
-    --accent-ink:#B33E10;
-    --accent-soft:#FFF1E8;
-    --good:#1F8A5A;
-    --good-soft:#EAF6EE;
-    --warn:#A9700F;
-    --warn-soft:#FBF1DE;
-    --bad:#C0392B;
-    --bad-soft:#FBEAE8;
+    --panel:#F6F7F5;
+    --panel-2:#EEF1EE;
+    --line:#E2E6E2;
+    --line-strong:#C9CFCA;
+    --ink:#1C2321;
+    --ink-soft:#56605C;
+    --ink-faint:#8C9591;
+    --accent:#2F5D62;
+    --accent-soft:#E8F0EF;
+    --good:#2E7D4F;
+    --good-soft:#E9F4EC;
+    --warn:#9A6B12;
+    --warn-soft:#F8F0DE;
+    --bad:#A8382C;
+    --bad-soft:#F8E9E6;
+    --serif:"Newsreader", Georgia, "Times New Roman", serif;
+    --sans:"Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme:dark;
+      --bg:#141817; --panel:#1B201F; --panel-2:#222826; --line:#2C3331; --line-strong:#3D4643;
+      --ink:#E7ECEA; --ink-soft:#A9B3AF; --ink-faint:#76807C;
+      --accent:#8DBFC3; --accent-soft:#1F2E2F;
+      --good:#78C295; --good-soft:#1B2A21; --warn:#D9B061; --warn-soft:#2D2618; --bad:#E48A7E; --bad-soft:#2F1D1A;
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme:dark;
+    --bg:#141817; --panel:#1B201F; --panel-2:#222826; --line:#2C3331; --line-strong:#3D4643;
+    --ink:#E7ECEA; --ink-soft:#A9B3AF; --ink-faint:#76807C;
+    --accent:#8DBFC3; --accent-soft:#1F2E2F;
+    --good:#78C295; --good-soft:#1B2A21; --warn:#D9B061; --warn-soft:#2D2618; --bad:#E48A7E; --bad-soft:#2F1D1A;
   }
 
   *{ box-sizing:border-box; }
-  html,body{ background:var(--bg); }
-  body{
-    margin:0;
-    color:var(--ink);
-    font-family:"IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
-    font-size:17px;
-    line-height:1.5;
-    -webkit-font-smoothing:antialiased;
-    cursor:default;
-    overflow-x:hidden;
-  }
-  h1,h2,h3{ margin:0; }
-  a{ color:inherit; text-decoration:none; }
-  .mono{ font-family:"IBM Plex Mono", ui-monospace, monospace; }
-  .display{ font-family:"Archivo", sans-serif; font-weight:900; text-transform:uppercase; letter-spacing:-0.01em; }
-  .accent-serif{ font-family:"Instrument Serif", Georgia, serif; font-style:italic; text-transform:none; color:var(--accent); font-weight:400; }
+  body{ margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased; padding-inline:20px; }
+  .page{ max-width:780px; margin:0 auto; padding-block:56px 72px; }
+  h1,h2,h3{ font-family:var(--serif); font-weight:500; margin:0; text-wrap:balance; color:var(--ink); }
+  p{ margin:0; }
+  .kicker{ font-size:12.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--accent); font-weight:600; }
 
-  @media (prefers-reduced-motion: reduce){
-    *{ animation:none !important; transition:none !important; scroll-behavior:auto !important; }
-    .cursor-dot, .cursor-ring{ display:none !important; }
-    .reveal{ opacity:1 !important; transform:none !important; }
-    .word-inner, .line span{ transform:none !important; }
-  }
+  header.intro{ display:flex; flex-direction:column; gap:16px; padding-bottom:40px; border-bottom:1px solid var(--line); }
+  header.intro h1{ font-size:clamp(34px,5vw,46px); line-height:1.1; }
+  header.intro p{ color:var(--ink-soft); max-width:60ch; font-size:17px; }
 
-  /* decorative custom cursor — overlays the real cursor, never replaces it */
-  .cursor-dot, .cursor-ring{ position:fixed; top:0; left:0; pointer-events:none; border-radius:50%; transform:translate(-50%,-50%); z-index:9999; mix-blend-mode:difference; }
-  .cursor-dot{ width:7px; height:7px; background:#fff; }
-  .cursor-ring{ width:34px; height:34px; border:1.5px solid #fff; transition:width .25s ease, height .25s ease; }
-  .cursor-ring.big{ width:74px; height:74px; }
-  @media (hover:none){ .cursor-dot,.cursor-ring{ display:none; } }
+  .changes{ margin-top:8px; background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:20px 24px; }
+  .changes summary{ cursor:pointer; font-weight:600; font-size:15px; color:var(--ink); list-style:none; display:flex; justify-content:space-between; gap:12px; }
+  .changes summary::-webkit-details-marker{ display:none; }
+  .changes summary .when{ font-family:var(--mono); font-size:12px; color:var(--ink-faint); font-weight:500; white-space:nowrap; }
+  .changes ul{ margin:14px 0 0; padding-left:18px; color:var(--ink-soft); font-size:14.5px; display:flex; flex-direction:column; gap:6px; }
 
-  .wrap{ max-width:1180px; margin:0 auto; padding:0 clamp(20px,5vw,64px); }
-  .band-line-top{ border-top:1px solid var(--line); }
-  .band-alt{ background:var(--panel); }
+  .gloss{ margin:16px 0 0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px 28px; }
+  @media (max-width:560px){ .gloss{ grid-template-columns:1fr; } }
+  .gloss dt{ font-weight:600; font-size:14px; color:var(--accent); }
+  .gloss dd{ margin:2px 0 0; font-size:13.5px; color:var(--ink-soft); line-height:1.5; }
+  .topbar{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+  .theme-btn{ font:inherit; font-size:13px; font-weight:600; color:var(--ink-soft); background:var(--panel); border:1px solid var(--line); border-radius:999px; padding:7px 14px; cursor:pointer; min-height:36px; }
+  .theme-btn:hover{ color:var(--ink); border-color:var(--line-strong); }
+  section.step{ display:grid; grid-template-columns:200px 1fr; gap:40px; padding-block:48px; border-bottom:1px solid var(--line); }
+  @media (max-width:760px){ section.step{ grid-template-columns:1fr; gap:24px; padding-block:40px; } }
+  .step-head{ display:flex; flex-direction:column; gap:8px; }
+  .step-head h2{ font-size:26px; line-height:1.2; }
+  .step-head p{ font-size:14px; color:var(--ink-soft); }
+  .step-body{ display:flex; flex-direction:column; gap:32px; min-width:0; }
 
-  /* ---------------- nav ---------------- */
-  nav{ position:sticky; top:0; z-index:20; background:rgba(255,255,255,.88); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); }
-  nav .wrap{ display:flex; align-items:center; justify-content:space-between; padding:18px clamp(20px,5vw,64px); }
-  .logo{ font-family:"Archivo", sans-serif; font-weight:900; font-size:14px; letter-spacing:0.01em; text-transform:uppercase; }
-  .navlinks{ display:flex; gap:26px; font-family:"IBM Plex Mono", monospace; font-size:12px; letter-spacing:0.04em; text-transform:uppercase; color:var(--ink-soft); }
-  .navlinks a{ position:relative; padding-bottom:2px; }
-  .navlinks a::after{ content:""; position:absolute; left:0; bottom:0; width:0; height:1px; background:var(--ink); transition:width .25s ease; }
-  .navlinks a:hover::after{ width:100%; }
-  @media (max-width:560px){ .navlinks{ display:none; } }
-
-  /* ---------------- hero ---------------- */
-  .hero{ padding:clamp(56px,11vh,110px) 0 44px; }
-  .eyebrow{ font-family:"IBM Plex Mono", monospace; font-size:12.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent-ink); font-weight:600; display:flex; align-items:center; gap:10px; margin-bottom:20px; }
-  .eyebrow::before{ content:""; width:7px; height:7px; border-radius:50%; background:var(--accent); display:inline-block; }
-  .hero-h1{ font-size:clamp(40px, 8.5vw, 104px); line-height:0.94; }
-  .hero-h1 .line{ display:block; overflow:hidden; }
-  .hero-h1 .line span{ display:inline-block; transform:translateY(108%); animation:lineUp 1s cubic-bezier(.19,1,.22,1) forwards; animation-delay:calc(var(--i) * 100ms + .05s); }
-  @keyframes lineUp{ to{ transform:translateY(0); } }
-
-  .hero-sub{ display:flex; justify-content:space-between; align-items:flex-end; gap:24px; margin-top:30px; flex-wrap:wrap; opacity:0; animation:fadeUp .8s cubic-bezier(.19,1,.22,1) forwards; animation-delay:.65s; }
-  @keyframes fadeUp{ from{ opacity:0; transform:translateY(10px);} to{ opacity:1; transform:translateY(0);} }
-  .hero-sub p{ max-width:42ch; font-size:17px; color:var(--ink-soft); margin:0; }
-  .hero-cue{ font-family:"IBM Plex Mono", monospace; font-size:12.5px; font-weight:600; color:var(--ink-faint); display:flex; align-items:center; gap:8px; flex:0 0 auto; }
-  .hero-cue svg{ animation:bob 1.6s ease-in-out infinite; }
-  @keyframes bob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(5px);} }
-
-  /* ---------------- decorative generative strip ---------------- */
-  .art-strip{ height:110px; display:block; }
-  .art-strip canvas{ width:100%; height:100%; display:block; }
-
-  /* ---------------- marquee ---------------- */
-  .marquee{ border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:18px 0; overflow:hidden; white-space:nowrap; }
-  .marquee-track{ display:inline-flex; gap:40px; animation:scrollx 28s linear infinite; }
-  @keyframes scrollx{ from{ transform:translateX(0);} to{ transform:translateX(-50%);} }
-  .marquee-track span{ font-family:"Archivo", sans-serif; font-weight:700; text-transform:uppercase; font-size:16px; color:var(--ink-faint); display:inline-flex; align-items:center; gap:40px; }
-  .marquee-track span em{ font-family:"Instrument Serif", serif; font-style:italic; color:var(--accent); font-weight:400; }
-
-  /* ---------------- how it works ---------------- */
-  .steps-strip{ display:grid; grid-template-columns:repeat(3,1fr); gap:32px; padding:36px 0; }
-  @media (max-width:760px){ .steps-strip{ grid-template-columns:1fr; gap:20px; } }
-  .steps-strip .s{ display:flex; gap:14px; align-items:baseline; }
-  .steps-strip .s .n{ font-family:"IBM Plex Mono", monospace; font-size:13px; color:var(--accent-ink); font-weight:600; }
-  .steps-strip .s p{ margin:0; font-size:14.5px; color:var(--ink-soft); line-height:1.5; }
-
-  /* ---------------- glossary ---------------- */
-  .glossary{ padding:8px 0 32px; }
-  .glossary > summary{ list-style:none; cursor:pointer; padding:14px 0; display:flex; align-items:center; gap:12px; font-weight:600; font-size:15.5px; color:var(--ink); }
-  .glossary > summary::-webkit-details-marker{ display:none; }
-  .glossary > summary .chev{ margin-left:auto; color:var(--ink-faint); transition:transform .2s ease; flex:0 0 auto; }
-  .glossary[open] > summary .chev{ transform:rotate(180deg); }
-  .glossary-body{ padding:8px 0 4px; display:grid; grid-template-columns:repeat(3,1fr); gap:20px 28px; }
-  @media (max-width:860px){ .glossary-body{ grid-template-columns:1fr 1fr; } }
-  @media (max-width:560px){ .glossary-body{ grid-template-columns:1fr; } }
-  .term dt{ font-weight:700; font-size:14px; color:var(--accent-ink); margin-bottom:3px; }
-  .term dd{ margin:0; font-size:13.5px; line-height:1.5; color:var(--ink-soft); }
-
-  /* ---------------- reveal ---------------- */
-  .reveal{ opacity:0; transform:translateY(26px); transition:opacity .7s cubic-bezier(.19,1,.22,1), transform .7s cubic-bezier(.19,1,.22,1); }
-  .reveal.in{ opacity:1; transform:none; }
-
-  /* ---------------- step rows (form) ---------------- */
-  .step-row{ display:grid; grid-template-columns:230px 1fr; gap:44px; padding:52px 0; border-top:1px solid var(--line); }
-  @media (max-width:860px){ .step-row{ grid-template-columns:1fr; gap:22px; padding:38px 0; } }
-  .step-label .n{ font-family:"IBM Plex Mono", monospace; font-size:13px; color:var(--ink-faint); font-weight:600; letter-spacing:0.04em; }
-  .step-label h2{ font-family:"Archivo", sans-serif; font-weight:900; text-transform:uppercase; font-size:clamp(21px,2.3vw,26px); margin-top:8px; line-height:1.05; }
-  .step-label p{ margin:10px 0 0; font-size:14px; color:var(--ink-soft); line-height:1.5; max-width:30ch; }
-
-  .step-content{ display:flex; flex-direction:column; gap:34px; }
-
-  .field{ display:flex; flex-direction:column; gap:9px; }
-  .field > label, .field > .fake-label{ font-size:16px; font-weight:700; color:var(--ink); line-height:1.4; }
-  .field .help{ font-size:14px; color:var(--ink-soft); line-height:1.5; margin-top:-4px; }
-
-  .mini-help{ margin-top:-2px; }
-  .mini-help summary{ list-style:none; cursor:pointer; display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:var(--accent-ink); padding:2px 0; }
-  .mini-help summary::-webkit-details-marker{ display:none; }
-  .mini-help summary::before{ content:"?"; display:inline-flex; align-items:center; justify-content:center; width:16px; height:16px; border-radius:50%; background:var(--accent-soft); color:var(--accent-ink); font-size:11px; font-weight:700; font-family:"IBM Plex Mono", monospace; }
-  .mini-help p{ margin:8px 0 0; font-size:13.5px; line-height:1.55; color:var(--ink-soft); background:var(--panel); border-left:2px solid var(--line-strong); border-radius:0 8px 8px 0; padding:10px 14px; }
-  .mini-help p strong{ color:var(--ink); }
-
-  .screening-tip{ background:var(--panel); border-left:2px solid var(--line-strong); border-radius:0 10px 10px 0; padding:18px 22px; font-size:14.5px; line-height:1.65; color:var(--ink-soft); margin:40px 0 -12px; }
-  .screening-tip strong{ color:var(--ink); }
-  @media (max-width:640px){ .screening-tip{ padding:16px 18px; } }
-
-  .field input[type="text"], .field input[type="number"], .field textarea{
-    width:100%; border:1.5px solid var(--line-strong); border-radius:12px; background:#fff; color:var(--ink);
-    font-family:inherit; font-size:16.5px; padding:14px 16px; min-height:54px; cursor:text;
-  }
-  .field textarea{ min-height:96px; resize:vertical; line-height:1.55; }
-  .field input::placeholder, .field textarea::placeholder{ color:var(--ink-faint); }
-  .field input:focus, .field textarea:focus, .tile:focus-visible, .pill:focus-visible, .chk:focus-visible, .btn-primary:focus-visible, .btn-ghost:focus-visible, summary:focus-visible{
-    outline:3px solid var(--accent); outline-offset:2px;
-  }
-
+  .field{ display:flex; flex-direction:column; gap:10px; }
+  .field > label, .q{ font-weight:600; font-size:15.5px; }
+  .help{ font-size:14px; color:var(--ink-soft); margin-top:-4px; }
   .row{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
   @media (max-width:520px){ .row{ grid-template-columns:1fr; } }
 
-  .tiles{ display:grid; gap:11px; }
-  .tiles.cols-3{ grid-template-columns:repeat(3,1fr); }
-  @media (max-width:640px){ .tiles.cols-3{ grid-template-columns:1fr; } }
-
-  .tile{ border:1.5px solid var(--line-strong); background:#fff; color:var(--ink); border-radius:13px; padding:15px 18px; min-height:58px; text-align:left; font-family:inherit; font-size:15.5px; font-weight:500; line-height:1.4; cursor:pointer; display:flex; align-items:center; gap:12px; transition:border-color .15s ease, background .15s ease; }
-  .tile:hover{ border-color:var(--ink-faint); }
-  .tile .dot{ width:19px; height:19px; border-radius:50%; border:2px solid var(--line-strong); flex:0 0 auto; position:relative; }
-  .tile.selected{ border-color:var(--accent); background:var(--accent-soft); color:var(--accent-ink); font-weight:600; }
-  .tile.selected .dot{ border-color:var(--accent); }
-  .tile.selected .dot::after{ content:""; position:absolute; inset:3px; border-radius:50%; background:var(--accent); }
-
-  .pillgroup{ display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
-  @media (max-width:420px){ .pillgroup{ grid-template-columns:1fr; } }
-  .pill{ border:1.5px solid var(--line-strong); background:#fff; color:var(--ink-soft); border-radius:999px; padding:13px 12px; font-family:inherit; font-size:15px; font-weight:600; cursor:pointer; text-align:center; min-height:52px; transition:border-color .15s ease, background .15s ease; }
-  .pill:hover{ border-color:var(--ink-faint); }
-  .pill.selected{ border-color:var(--accent); background:var(--accent-soft); color:var(--accent-ink); }
-
-  .checks{ display:flex; flex-wrap:wrap; gap:10px; }
-  .chk{ border:1.5px solid var(--line-strong); background:#fff; color:var(--ink); border-radius:11px; padding:12px 16px; font-family:inherit; font-size:15px; font-weight:500; cursor:pointer; display:flex; align-items:center; gap:9px; min-height:50px; }
-  .chk .box{ width:18px; height:18px; border-radius:5px; border:2px solid var(--line-strong); flex:0 0 auto; position:relative; }
-  .chk.selected{ border-color:var(--accent); background:var(--accent-soft); color:var(--accent-ink); font-weight:600; }
-  .chk.selected .box{ border-color:var(--accent); background:var(--accent); }
-  .chk.selected .box::after{ content:""; position:absolute; left:4px; top:0; width:5px; height:9px; border:solid white; border-width:0 2px 2px 0; transform:rotate(40deg); }
-
-  /* ---------------- submit band ---------------- */
-  .submit-band{ padding:56px 0 60px; display:flex; flex-direction:column; align-items:center; gap:16px; text-align:center; }
-  .btn-primary{
-    background:var(--ink); color:#fff; border:1.5px solid var(--ink); border-radius:999px; padding:19px 44px;
-    font-family:"IBM Plex Mono", monospace; font-size:15px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;
-    cursor:pointer; width:100%; max-width:420px; min-height:62px; will-change:transform;
-    transition:transform .18s cubic-bezier(.19,1,.22,1), background .2s ease, color .2s ease;
+  input[type=text], input[type=number], textarea{
+    width:100%; border:1px solid var(--line-strong); border-radius:8px; background:var(--bg); color:var(--ink);
+    font:inherit; font-size:16px; padding:12px 14px; min-height:48px;
   }
-  .btn-primary:hover{ background:var(--accent); border-color:var(--accent); }
-  .required-note{ font-size:13px; color:var(--ink-faint); }
+  textarea{ min-height:92px; resize:vertical; }
+  input::placeholder, textarea::placeholder{ color:var(--ink-faint); }
+  :focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
 
-  /* ---------------- results ---------------- */
-  #results{ display:none; }
-  #results.show{ display:block; }
-  .results-top{ display:flex; flex-direction:column; gap:6px; padding-top:8px; }
-  .results-eyebrow{ font-family:"IBM Plex Mono", monospace; font-size:12.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-faint); font-weight:600; }
-  #resultName{ font-family:"Archivo", sans-serif; font-weight:900; text-transform:uppercase; font-size:clamp(28px,5vw,48px); line-height:1.02; }
+  .opts{ display:flex; flex-direction:column; gap:8px; }
+  .opts.inline{ flex-direction:row; flex-wrap:wrap; }
+  .opt{ border:1px solid var(--line-strong); background:var(--bg); color:var(--ink); border-radius:8px; padding:11px 14px; font:inherit; font-size:15px; text-align:left; cursor:pointer; display:flex; align-items:center; gap:11px; min-height:46px; transition:border-color .15s, background .15s; }
+  .opts.inline .opt{ flex:1 1 auto; justify-content:center; text-align:center; }
+  .opt:hover{ border-color:var(--ink-faint); }
+  .opt .mk{ width:15px; height:15px; border-radius:50%; border:1.5px solid var(--line-strong); flex:0 0 auto; position:relative; }
+  .opts[data-multi] .opt .mk{ border-radius:4px; }
+  .opt.on{ border-color:var(--accent); background:var(--accent-soft); }
+  .opt.on .mk{ border-color:var(--accent); background:var(--accent); box-shadow:inset 0 0 0 3px var(--accent-soft); }
+  .opts[data-multi] .opt.on .mk{ box-shadow:none; }
+  .opt small{ color:var(--ink-faint); font-size:12.5px; margin-left:auto; padding-left:8px; }
+  .tag-new{ font-family:var(--mono); font-size:10.5px; letter-spacing:.05em; color:var(--accent); border:1px solid var(--accent); border-radius:4px; padding:1px 5px; margin-left:8px; vertical-align:2px; font-weight:500; }
 
-  .confidence-row{ display:inline-flex; align-items:center; gap:9px; font-size:13.5px; color:var(--ink-soft); border:1px solid var(--line); border-radius:999px; padding:8px 16px; margin-top:18px; width:fit-content; }
-  .confidence-dot{ width:9px; height:9px; border-radius:50%; flex:0 0 auto; }
+  details.hint summary{ cursor:pointer; font-size:13.5px; color:var(--accent); font-weight:600; list-style:none; }
+  details.hint summary::-webkit-details-marker{ display:none; }
+  details.hint summary::before{ content:"+ "; }
+  details.hint[open] summary::before{ content:"– "; }
+  details.hint div{ margin-top:10px; font-size:14px; color:var(--ink-soft); background:var(--panel); border-radius:8px; padding:14px 16px; line-height:1.6; }
+  details.hint strong{ color:var(--ink); }
 
-  .score-panel{ display:grid; grid-template-columns:auto 1fr; gap:40px; align-items:center; padding:44px 0; }
-  @media (max-width:640px){ .score-panel{ grid-template-columns:1fr; justify-items:center; text-align:center; gap:24px; } }
-  .gauge-wrap{ position:relative; width:180px; height:180px; flex:0 0 auto; }
-  .gauge-wrap svg{ width:100%; height:100%; transform:rotate(-90deg); }
-  .gauge-num{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
-  .gauge-num .score{ font-family:"IBM Plex Mono", monospace; font-size:42px; font-weight:600; line-height:1; }
-  .gauge-num .of{ font-size:12.5px; color:var(--ink-faint); margin-top:4px; }
+  .actions{ display:flex; flex-wrap:wrap; gap:12px; justify-content:center; padding-block:44px 8px; }
+  .btn{ font:inherit; font-weight:600; font-size:15px; border-radius:8px; padding:13px 26px; cursor:pointer; min-height:48px; border:1px solid var(--accent); }
+  .btn.primary{ background:var(--accent); color:var(--bg); }
+  .btn.primary:hover{ filter:brightness(1.08); }
+  .btn.ghost{ background:transparent; color:var(--accent); }
+  .btn.ghost:hover{ background:var(--accent-soft); }
+  .note{ text-align:center; font-size:13px; color:var(--ink-faint); }
 
-  .verdict-block{ display:flex; flex-direction:column; gap:10px; }
-  .verdict-pill{ display:inline-flex; align-items:center; gap:8px; align-self:flex-start; padding:8px 16px; border-radius:999px; font-size:13px; font-weight:700; font-family:"IBM Plex Mono", monospace; letter-spacing:0.03em; }
-  @media (max-width:640px){ .verdict-pill{ align-self:center; } }
-  .verdict-block h3{ font-family:"Archivo", sans-serif; font-weight:900; text-transform:uppercase; font-size:clamp(22px,3vw,28px); }
-  .verdict-block p{ margin:0; color:var(--ink-soft); font-size:15px; line-height:1.6; max-width:44ch; }
+  #results{ margin-top:56px; border-top:1px solid var(--line); padding-top:48px; display:flex; flex-direction:column; gap:40px; }
+  .res-top{ display:grid; grid-template-columns:auto 1fr; gap:36px; align-items:center; }
+  @media (max-width:560px){ .res-top{ grid-template-columns:1fr; gap:20px; } }
+  .scorebox{ width:148px; height:148px; border-radius:50%; border:1px solid var(--line); display:flex; flex-direction:column; align-items:center; justify-content:center; background:var(--panel); position:relative; }
+  .scorebox svg{ position:absolute; inset:0; width:100%; height:100%; transform:rotate(-90deg); }
+  .scorebox .num{ font-family:var(--serif); font-size:46px; line-height:1; font-variant-numeric:tabular-nums; }
+  .scorebox .of{ font-size:12px; color:var(--ink-faint); margin-top:4px; }
+  .verdict{ display:flex; flex-direction:column; gap:10px; }
+  .pill{ align-self:flex-start; font-size:12px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; padding:5px 12px; border-radius:999px; }
+  .verdict h2{ font-size:30px; line-height:1.15; }
+  .verdict p{ color:var(--ink-soft); max-width:56ch; }
+  .conf{ font-size:13.5px; color:var(--ink-soft); }
 
-  .explain{ font-size:15.5px; line-height:1.7; color:var(--ink-soft); padding:28px 0; border-top:1px solid var(--line); max-width:70ch; }
+  .block h3{ font-size:20px; margin-bottom:14px; }
+  .lists{ display:grid; grid-template-columns:1fr 1fr; gap:36px; }
+  @media (max-width:640px){ .lists{ grid-template-columns:1fr; } }
+  .lists ul, .qs{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; }
+  .lists li, .qs li{ font-size:14.5px; padding:10px 0 10px 16px; border-top:1px solid var(--line); position:relative; color:var(--ink); }
+  .lists li:first-child, .qs li:first-child{ border-top:0; }
+  .lists li::before{ content:""; position:absolute; left:0; top:19px; width:6px; height:6px; border-radius:50%; }
+  .lists .good li::before{ background:var(--good); }
+  .lists .warn li::before{ background:var(--warn); }
+  .lists .lbl{ font-size:12.5px; letter-spacing:.08em; text-transform:uppercase; font-weight:700; display:block; margin-bottom:6px; }
+  .lists .good .lbl{ color:var(--good); } .lists .warn .lbl{ color:var(--warn); }
+  .qs li{ padding-left:0; color:var(--ink-soft); }
+  .qs li b{ color:var(--ink); font-weight:600; }
 
-  .result-lists{ display:grid; grid-template-columns:1fr 1fr; gap:20px 56px; padding:8px 0 60px; }
-  @media (max-width:700px){ .result-lists{ grid-template-columns:1fr; gap:36px; } }
-  .result-col .rc-label{ font-family:"IBM Plex Mono", monospace; font-size:12.5px; letter-spacing:0.08em; text-transform:uppercase; font-weight:700; margin-bottom:14px; display:block; }
-  .result-col.good .rc-label{ color:var(--good); }
-  .result-col.warn .rc-label{ color:var(--warn); }
-  .result-col ul{ margin:0; padding:0; list-style:none; display:flex; flex-direction:column; }
-  .result-col li{ font-size:14.5px; line-height:1.55; padding:12px 0 12px 16px; border-top:1px solid var(--line); position:relative; opacity:0; transform:translateY(6px); animation:popIn .5s cubic-bezier(.19,1,.22,1) forwards; }
-  .result-col li:first-child{ border-top:none; }
-  .result-col li::before{ content:""; position:absolute; left:0; top:19px; width:6px; height:6px; border-radius:50%; }
-  .result-col.good li::before{ background:var(--good); }
-  .result-col.warn li::before{ background:var(--warn); }
-  @keyframes popIn{ to{ opacity:1; transform:none; } }
-  .empty-note{ color:var(--ink-faint); font-style:italic; }
+  .ready{ display:grid; grid-template-columns:1fr; border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+  .ready .r{ display:grid; grid-template-columns:28px 1fr auto; gap:12px; align-items:center; padding:11px 16px; border-top:1px solid var(--line); font-size:14.5px; }
+  .ready .r:first-child{ border-top:0; }
+  .ready .ic{ font-family:var(--mono); font-size:13px; text-align:center; border-radius:4px; }
+  .ready .st{ font-size:12.5px; color:var(--ink-faint); }
+  .r.y .ic{ color:var(--good); } .r.p .ic{ color:var(--warn); } .r.n .ic{ color:var(--ink-faint); }
+  .ready-sum{ font-size:14px; color:var(--ink-soft); margin-top:10px; }
 
-  .reset-row{ display:flex; justify-content:center; padding:8px 0 40px; }
-  .btn-ghost{ background:transparent; border:1.5px solid var(--ink); color:var(--ink); border-radius:999px; padding:13px 26px; font-family:"IBM Plex Mono", monospace; font-size:13.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.03em; cursor:pointer; min-height:50px; transition:background .2s ease, color .2s ease; }
-  .btn-ghost:hover{ background:var(--ink); color:#fff; }
+  .comp{ background:var(--panel); border-radius:10px; padding:20px 22px; font-size:15px; color:var(--ink-soft); }
+  .comp b{ color:var(--ink); }
 
-  footer{ padding:28px 0 50px; border-top:1px solid var(--line); text-align:center; font-family:"IBM Plex Mono", monospace; font-size:11.5px; color:var(--ink-faint); }
-  footer .wrap{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+  #copyOut{ width:100%; min-height:160px; font-family:var(--mono); font-size:13px; }
+  footer{ margin-top:64px; padding-top:24px; border-top:1px solid var(--line); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; font-size:12.5px; color:var(--ink-faint); }
+  @media (prefers-reduced-motion: reduce){ *{ transition:none !important; } }
 </style>
 </head>
 <body>
-
-<div class="cursor-ring" id="cursorRing"></div>
-<div class="cursor-dot" id="cursorDot"></div>
-
-<nav>
-  <div class="wrap">
-    <span class="logo">Platform Fit Check</span>
-    <div class="navlinks">
-      <a href="#glossary-anchor">Glossary</a>
-      <a href="#form-start">Evaluate</a>
-    </div>
-  </div>
-</nav>
-
-<div class="wrap hero">
-  <span class="eyebrow">For recruiters, not engineers</span>
-  <h1 class="hero-h1 display">
-    <span class="line" style="--i:0"><span>Score any</span></span>
-    <span class="line" style="--i:1"><span>platform <span class="accent-serif">engineer.</span></span></span>
-  </h1>
-  <div class="hero-sub">
-    <p>Answer plain-English questions about a CV. Get a clear score, a verdict, and the reasoning behind it — checked against your team's actual hiring bar.</p>
-    <a href="#form-start" class="hero-cue" id="scrollCue">
-      Start below
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-    </a>
-  </div>
-</div>
-
-<div class="art-strip"><canvas id="artCanvas"></canvas></div>
-
-<div class="marquee">
-  <div class="marquee-track">
-    <span>KUBERNETES <em>·</em> TERRAFORM <em>·</em> AWS <em>·</em> GITOPS <em>·</em> CROSSPLANE <em>·</em> PYTHON <em>·</em> GO <em>·</em> ARGOCD <em>·</em></span>
-    <span>KUBERNETES <em>·</em> TERRAFORM <em>·</em> AWS <em>·</em> GITOPS <em>·</em> CROSSPLANE <em>·</em> PYTHON <em>·</em> GO <em>·</em> ARGOCD <em>·</em></span>
-  </div>
-</div>
-
-<div class="band-alt band-line-top">
-  <div class="wrap steps-strip reveal">
-    <div class="s"><span class="n">01</span><p>Answer a few plain-language questions</p></div>
-    <div class="s"><span class="n">02</span><p>We check it against your team's real bar</p></div>
-    <div class="s"><span class="n">03</span><p>Get a score, a verdict, and why</p></div>
-  </div>
-</div>
-
-<div class="band-line-top" id="glossary-anchor">
-  <div class="wrap">
-    <details class="glossary reveal">
-      <summary>
-        Not sure what a word means? Tap here for a plain-English glossary
-        <svg class="chev" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-      </summary>
-      <dl class="glossary-body">
-        <div class="term"><dt>Kubernetes ("K8s")</dt><dd>Runs and looks after many small programs at once, restarting or scaling them automatically.</dd></div>
-        <div class="term"><dt>Cluster</dt><dd>A group of computers working together as one system, managed by Kubernetes.</dd></div>
-        <div class="term"><dt>Terraform / IaC</dt><dd>Writing code that builds cloud infrastructure automatically, instead of clicking around by hand.</dd></div>
-        <div class="term"><dt>AWS / Azure / GCP</dt><dd>The three biggest cloud computing companies — Amazon, Microsoft, Google.</dd></div>
-        <div class="term"><dt>DevOps</dt><dd>One team both builds the software and keeps it running day to day.</dd></div>
-        <div class="term"><dt>Platform Engineering</dt><dd>Building tools that let other engineers run their own software without hand-holding.</dd></div>
-        <div class="term"><dt>Cloud Engineering</dt><dd>Focused on the infrastructure itself — networks, storage, accounts.</dd></div>
-        <div class="term"><dt>GitOps</dt><dd>The "master plan" lives in code; tools apply it automatically.</dd></div>
-        <div class="term"><dt>ArgoCD / Helm</dt><dd>Popular tools that auto-install and update software on Kubernetes.</dd></div>
-        <div class="term"><dt>Crossplane</dt><dd>Manages cloud infrastructure the same way Kubernetes manages software.</dd></div>
-        <div class="term"><dt>Self-service platform</dt><dd>Lets engineers get what they need on their own, without a specialist.</dd></div>
-        <div class="term"><dt>CI/CD</dt><dd>Automated pipelines that test and release code changes.</dd></div>
-        <div class="term"><dt>RBAC</dt><dd>The rules for who is allowed to do what inside a system.</dd></div>
-        <div class="term"><dt>Bootcamp transitioner</dt><dd>Moved into tech via a short course, not years of hands-on work.</dd></div>
-        <div class="term"><dt>"Buzzword" CV</dt><dd>Impressive-sounding tools and claims, with little real detail behind them.</dd></div>
-        <div class="term"><dt>Ops vs. platform</dt><dd>Ops keeps existing systems running (tickets, monitoring, admin). Platform work builds something other engineering teams use on their own. The same tools can be either — it's the career story that tells them apart.</dd></div>
-        <div class="term"><dt>Strict-tier account</dt><dd>Some clients set a stricter bar than others — wanting real junior platform engineers already doing the job, not people transitioning in.</dd></div>
+<div class="page">
+  <header class="intro">
+    <div class="topbar"><span class="kicker">BBD · Platform Engineer screening</span><button type="button" class="theme-btn" id="themeBtn" aria-label="Switch between light and dark mode"><span id="themeIcon" aria-hidden="true">◐</span> <span id="themeLabel">Dark mode</span></button></div>
+    <h1>Platform Fit Check</h1>
+    <p>Answer plain-English questions about a CV and get a score out of 10, a verdict, how close they are to the client's "ready to contribute" bar, and the questions to ask next. Built from BBD's benchmark CVs, every recorded interview outcome, and senior platform guidance.</p>
+    <details class="changes">
+      <summary>What changed in this version <span class="when">23 Sep 2026</span></summary>
+      <ul>
+        <li><b>The client's actual stack is now in the model:</b> Kubernetes, Crossplane (written in KCL) and Argo, on AWS, Azure and Databricks, with Go / TypeScript / Python code.</li>
+        <li><b>Crossplane counts as infrastructure-as-code</b> and is the closest match to the day-to-day work. Terraform is still good, but no longer the only way to pass.</li>
+        <li><b>Azure is as good as AWS.</b> Don't mark someone down for being Azure-only.</li>
+        <li><b>Certifications</b> are a small supporting signal only. CKA, CKS and CNPE count; KCNA and vendor certs barely move the score.</li>
+        <li><b>New:</b> multi-team / multi-cluster scale, AI platform work (serving other teams, not being the AI team), a "ready to contribute" checklist, the closest past profile.</li>
+      </ul>
+    </details>
+    <details class="changes">
+      <summary>Plain-English glossary <span class="when">tap to open</span></summary>
+      <dl class="gloss">
+        <div><dt>Kubernetes ("K8s")</dt><dd>Runs and looks after many small programs at once, restarting or scaling them automatically.</dd></div>
+        <div><dt>Cluster</dt><dd>A group of computers working together as one system, managed by Kubernetes.</dd></div>
+        <div><dt>Terraform / IaC</dt><dd>Writing code that builds cloud infrastructure automatically, instead of clicking around by hand.</dd></div>
+        <div><dt>Crossplane</dt><dd>Manages cloud infrastructure the same way Kubernetes manages software. The client platform is built on it.</dd></div>
+        <div><dt>KCL</dt><dd>The language the client uses to write Crossplane "compositions" — the recipes teams order infrastructure from.</dd></div>
+        <div><dt>XRD / Composition</dt><dd>Crossplane's way of defining a menu item (XRD) and how it gets built (Composition). Writing these is platform work.</dd></div>
+        <div><dt>AWS / Azure / GCP</dt><dd>The three biggest cloud providers — Amazon, Microsoft, Google. The client uses AWS and Azure.</dd></div>
+        <div><dt>Databricks</dt><dd>A data and AI service the platform sets up for its data teams.</dd></div>
+        <div><dt>GitOps / ArgoCD</dt><dd>The "master plan" lives in code; Argo applies it automatically to the clusters.</dd></div>
+        <div><dt>Helm</dt><dd>A packaging tool for installing software on Kubernetes.</dd></div>
+        <div><dt>Self-service platform</dt><dd>Lets engineers get what they need on their own, without a specialist.</dd></div>
+        <div><dt>CI/CD</dt><dd>Automated pipelines that test and release code. Everyone does this now — it isn't platform work on its own.</dd></div>
+        <div><dt>RBAC</dt><dd>The rules for who is allowed to do what inside a system.</dd></div>
+        <div><dt>Operator / controller</dt><dd>A small Go program that teaches Kubernetes to manage something new. Strong platform signal.</dd></div>
+        <div><dt>CKA / CKS / CNPE</dt><dd>Hands-on Kubernetes exams done on a live cluster. KCNA is the multiple-choice entry-level one.</dd></div>
+        <div><dt>DevOps vs Cloud vs Platform</dt><dd>DevOps supports teams' releases; Cloud builds the cloud itself; Platform builds a product other teams self-serve from.</dd></div>
+        <div><dt>Ops vs platform</dt><dd>Ops keeps existing systems running (tickets, monitoring, admin). Platform builds something other teams use on their own. Same tools, different career story.</dd></div>
+        <div><dt>Bootcamp transitioner</dt><dd>Moved into tech via a short course, not years of hands-on work.</dd></div>
+        <div><dt>"Buzzword" CV</dt><dd>Impressive-sounding tools and claims, with little real detail behind them.</dd></div>
+        <div><dt>Strict-tier account</dt><dd>Some clients want juniors already doing platform work, with Python and Go — not people transitioning in.</dd></div>
       </dl>
     </details>
-  </div>
-</div>
+    <p class="help" style="margin-top:4px;"><b>How to fill this in:</b> start with the CV, then close gaps in a short call — ask them to walk you through one real project. If you still can't tell, pick "Not sure" rather than guessing; the tool lowers its confidence instead of guessing for you.</p>
+  </header>
 
-<form id="evalForm">
-  <div id="form-start"></div>
-
-  <div class="wrap">
-    <div class="screening-tip reveal">
-      <strong>How to fill this in:</strong> Start with the CV, then close the gaps in a short call or interview — ask the candidate to walk you through one real project in their own words. Every tricky question below has a "?" you can open for plain-language guidance, including exactly what to ask. If you genuinely can't tell after that, pick "Not sure" rather than guessing — the tool accounts for missing information and tells you when it has too little to be confident, rather than quietly guessing on your behalf. This works the same way whether you're a recruiter, a hiring manager, or the candidate screening themselves.
-    </div>
-    <div class="step-row reveal">
-      <div class="step-label">
-        <span class="n">STEP 01</span>
-        <h2>The basics</h2>
-        <p>Who they are, and what role you're weighing them against.</p>
-      </div>
-      <div class="step-content">
-        <div class="field">
-          <label for="name">Candidate name</label>
-          <input type="text" id="name" placeholder="e.g. Jane Dlamini">
+  <form id="evalForm" novalidate>
+    <section class="step">
+      <div class="step-head"><span class="kicker">Step 1</span><h2>The basics</h2><p>Who they are and which role you're weighing them for.</p></div>
+      <div class="step-body">
+        <div class="field"><label for="name">Candidate name</label><input type="text" id="name" placeholder="e.g. Jane Dlamini"></div>
+        <div class="row">
+          <div class="field"><label for="title">Current title</label><input type="text" id="title" placeholder="e.g. DevOps Engineer"></div>
+          <div class="field"><label for="employer">Current employer</label><input type="text" id="employer" placeholder="e.g. Standard Bank"></div>
         </div>
         <div class="row">
-          <div class="field">
-            <label for="title">Current title</label>
-            <input type="text" id="title" placeholder="e.g. DevOps Engineer">
-          </div>
-          <div class="field">
-            <label for="employer">Current employer</label>
-            <input type="text" id="employer" placeholder="e.g. Acme Cloud">
-          </div>
+          <div class="field"><label for="years">Years in platform / cloud / DevOps work</label><input type="number" id="years" min="0" max="45" placeholder="e.g. 4"></div>
+          <div class="field"><label for="rate">Expected rate (optional)</label><input type="text" id="rate" placeholder="e.g. R55k pm"></div>
         </div>
-        <div class="row">
-          <div class="field">
-            <label for="years">Years in platform / cloud / DevOps work</label>
-            <div class="help">Infrastructure roles only, not general dev.</div>
-            <input type="number" id="years" min="0" max="40" placeholder="e.g. 4">
-          </div>
-          <div class="field">
-            <label for="rate">Expected rate (optional)</label>
-            <input type="text" id="rate" placeholder="e.g. R55k pm">
+                <div class="field">
+          <span class="q">Which account is this for?</span>
+          <div class="opts inline" data-g="account">
+            <button type="button" class="opt" data-v="nn"><span class="mk"></span>Strict-tier client</button>
+            <button type="button" class="opt" data-v="other"><span class="mk"></span>Standard account</button>
           </div>
         </div>
         <div class="field">
-          <span class="fake-label">Does their rate ask seem high for their level?</span>
-          <div class="help">Matters less for an exceptional junior, more for a borderline profile.</div>
-          <div class="pillgroup" data-group="rateHigh">
-            <button type="button" class="pill" data-value="yes">Yes, high</button>
-            <button type="button" class="pill" data-value="no">No, reasonable</button>
-            <button type="button" class="pill" data-value="na">Not discussed yet</button>
+          <span class="q">Which role?</span>
+          <details class="hint"><summary>What's the difference?</summary><div><strong>Platform Engineer:</strong> builds a self-service product other engineering teams use. <strong>Cloud Engineer:</strong> builds and secures the cloud infrastructure itself. <strong>DevOps:</strong> supports teams' pipelines and releases — broader and more junior-friendly.</div></details>
+          <div class="opts inline" data-g="stream">
+            <button type="button" class="opt" data-v="platform"><span class="mk"></span>Platform Engineer</button>
+            <button type="button" class="opt" data-v="cloud"><span class="mk"></span>Cloud Engineer</button>
+            <button type="button" class="opt" data-v="devops"><span class="mk"></span>DevOps</button>
           </div>
         </div>
         <div class="field">
-          <span class="fake-label">Is this for a strict-tier account?</span>
-          <div class="help">Some clients set a stricter bar than others — real junior platform engineers already doing the job, not people transitioning in. Choose "No" for standard accounts, where the bar flexes a little.</div>
-          <div class="pillgroup" data-group="strict" style="grid-template-columns:1fr 1fr;">
-            <button type="button" class="pill" data-value="yes">Yes — strict tier</button>
-            <button type="button" class="pill" data-value="no">No — standard account</button>
+          <span class="q">Does their rate seem high for their level?</span>
+          <div class="opts inline" data-g="rateHigh">
+            <button type="button" class="opt" data-v="yes"><span class="mk"></span>Yes, high</button>
+            <button type="button" class="opt" data-v="no"><span class="mk"></span>Reasonable</button>
+            <button type="button" class="opt" data-v="na"><span class="mk"></span>Not known yet</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="step">
+      <div class="step-head"><span class="kicker">Step 2</span><h2>The deciding question</h2><p>Past panels have declined strong CVs on this alone.</p></div>
+      <div class="step-body">
+        <div class="field">
+          <span class="q">Do they build the platform, or deploy onto one?</span>
+          <details class="hint"><summary>How do I tell?</summary><div>The panel's test: someone who only knows how to deploy and maintain workloads on a platform is a DevOps engineer, not a platform engineer. Platform engineers build the platform itself.<br><br><strong>Builds it:</strong> "built a portal / module / template other teams use", "developers can now create X themselves", a named internal platform, golden paths, Backstage. <strong>Deploys onto it:</strong> pipelines, releases, monitoring, incidents, tickets, "maintained clusters", lots of CI/CD talk. Building Jenkins pipelines is not platform work any more.<br><br><strong>Ask:</strong> "Tell me about something you built that other teams use on their own, without you being involved each time."</div></details>
+          <div class="opts" data-g="opsPlatform">
+            <button type="button" class="opt" data-v="ops"><span class="mk"></span>Deploys / maintains — pipelines, tickets, monitoring, admin</button>
+            <button type="button" class="opt" data-v="mixed"><span class="mk"></span>Mixed — some building, mostly running</button>
+            <button type="button" class="opt" data-v="platform"><span class="mk"></span>Builds it — capability other teams self-serve from</button>
+            <button type="button" class="opt" data-v="unsure"><span class="mk"></span>Not sure yet</button>
           </div>
         </div>
         <div class="field">
-          <span class="fake-label">Which role are you screening for?</span>
-          <div class="help">Each stream has a different bar.</div>
-          <details class="mini-help"><summary>What does this mean?</summary>
-            <p><strong>Platform Engineer:</strong> builds tools other engineers use. <strong>Cloud Engineer:</strong> focuses on cloud infrastructure. <strong>DevOps:</strong> a broader, more junior-friendly role.</p>
-          </details>
-          <div class="tiles cols-3" data-group="stream">
-            <button type="button" class="tile" data-value="platform"><span class="dot"></span>Platform Engineer</button>
-            <button type="button" class="tile" data-value="cloud"><span class="dot"></span>Cloud Engineer</button>
-            <button type="button" class="tile" data-value="devops"><span class="dot"></span>DevOps</button>
+          <span class="q">Built self-service tools for other engineers?</span>
+          <div class="help">Doesn't need the words "self-service" — does anyone get a server, pipeline or environment from something they built, without asking them?</div>
+          <div class="opts inline" data-g="selfservice">
+            <button type="button" class="opt" data-v="yes"><span class="mk"></span>Yes</button>
+            <button type="button" class="opt" data-v="no"><span class="mk"></span>No</button>
+            <button type="button" class="opt" data-v="unsure"><span class="mk"></span>Not sure</button>
           </div>
         </div>
+        <div class="field">
+          <span class="q">Built it for many teams at scale? <span class="tag-new">NEW</span></span>
+          <details class="hint"><summary>What counts?</summary><div>Many teams sharing one platform safely (multi-tenant), rolling changes out to many clusters, onboarding new teams without tickets. Look for numbers of teams, clusters or apps — e.g. "monitoring for hundreds of apps across dozens of teams". Real platform work usually happens in big organisations.</div></details>
+          <div class="opts inline" data-g="scale">
+            <button type="button" class="opt" data-v="yes"><span class="mk"></span>Yes</button>
+            <button type="button" class="opt" data-v="no"><span class="mk"></span>No / small shop</button>
+            <button type="button" class="opt" data-v="unsure"><span class="mk"></span>Not sure</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="step">
+      <div class="step-head"><span class="kicker">Step 3</span><h2>Technical signals</h2><p>Judge by named projects, not the skills list.</p></div>
+      <div class="step-body">
+        <div class="field">
+          <span class="q">Kubernetes</span>
+          <details class="hint"><summary>How do I tell?</summary><div><strong>Runs it:</strong> cluster upgrades, permissions (RBAC), writing operators/CRDs, multi-tenant setup, on-call for the cluster. <strong>Uses it:</strong> "deployed our app to Kubernetes", Helm installs, kubectl. <strong>Ask:</strong> "Who sets up and upgrades your clusters — you, or a team you deploy to?"</div></details>
+          <div class="opts" data-g="k8s">
+            <button type="button" class="opt" data-v="none"><span class="mk"></span>None, or not mentioned</button>
+            <button type="button" class="opt" data-v="basic"><span class="mk"></span>Deploys apps to it</button>
+            <button type="button" class="opt" data-v="advanced"><span class="mk"></span>Runs clusters — upgrades, RBAC, operators</button>
+            <button type="button" class="opt" data-v="unsure"><span class="mk"></span>Not sure yet</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="q">Crossplane <span class="tag-new">NEW</span></span>
+          <details class="hint"><summary>Why this matters now</summary><div>The client platform is built on Crossplane, with compositions written in a language called <strong>KCL</strong>. Someone who has <em>written</em> Crossplane "compositions" or "XRDs" is doing the actual day job — the strongest single match. Having it installed or "used" counts for less.</div></details>
+          <div class="opts" data-g="crossplane">
+            <button type="button" class="opt" data-v="none"><span class="mk"></span>Not mentioned</button>
+            <button type="button" class="opt" data-v="used"><span class="mk"></span>Used it / worked alongside it</button>
+            <button type="button" class="opt" data-v="authored"><span class="mk"></span>Wrote compositions / XRDs / a Crossplane package</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="q">Other infrastructure-as-code (Terraform, OpenTofu, CDK, Pulumi)</span>
+          <div class="help">Ansible alone doesn't count.</div>
+          <div class="opts inline" data-g="iac">
+            <button type="button" class="opt" data-v="none"><span class="mk"></span>None</button>
+            <button type="button" class="opt" data-v="some"><span class="mk"></span>Some</button>
+            <button type="button" class="opt" data-v="strong"><span class="mk"></span>Strong, in production</button>
+            <button type="button" class="opt" data-v="unsure"><span class="mk"></span>Not sure</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="q">Cloud depth</span>
+          <details class="hint"><summary>Basic vs deep</summary><div><strong>Deep:</strong> permissions and identity (IAM / Entra ID, workload identity), networking (VPC / VNet, private endpoints), multiple accounts or subscriptions, security boundaries. <strong>Basic:</strong> launches servers and storage buckets. AWS and Azure count equally.</div></details>
+          <div class="opts inline" data-g="cloud">
+            <button type="button" class="opt" data-v="none"><span class="mk"></span>None</button>
+            <button type="button" class="opt" data-v="basic"><span class="mk"></span>Basic</button>
+            <button type="button" class="opt" data-v="deep"><span class="mk"></span>Deep</button>
+            <button type="button" class="opt" data-v="unsure"><span class="mk"></span>Not sure</button>
+          </div>
+          <div class="opts inline" data-g="clouds" data-multi>
+            <button type="button" class="opt" data-v="aws"><span class="mk"></span>AWS</button>
+            <button type="button" class="opt" data-v="azure"><span class="mk"></span>Azure</button>
+            <button type="button" class="opt" data-v="gcp"><span class="mk"></span>GCP</button>
+            <button type="button" class="opt" data-v="databricks"><span class="mk"></span>Databricks</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="q">GitOps (ArgoCD / Flux)</span>
+          <div class="opts inline" data-g="gitops">
+            <button type="button" class="opt" data-v="yes"><span class="mk"></span>Yes, hands-on</button>
+            <button type="button" class="opt" data-v="some"><span class="mk"></span>Mentioned</button>
+            <button type="button" class="opt" data-v="no"><span class="mk"></span>No</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="q">Languages they've actually written code in</span>
+          <div class="help">Go matters most — the client's platform tools are written in it. Being good at Bash is not impressive.</div>
+          <div class="opts inline" data-g="langs" data-multi>
+            <button type="button" class="opt" data-v="go"><span class="mk"></span>Go</button>
+            <button type="button" class="opt" data-v="python"><span class="mk"></span>Python</button>
+            <button type="button" class="opt" data-v="typescript"><span class="mk"></span>TypeScript</button>
+            <button type="button" class="opt" data-v="kcl"><span class="mk"></span>KCL</button>
+            <button type="button" class="opt" data-v="bashonly"><span class="mk"></span>Only Bash / scripts</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="q">Anything else from this list? <span class="tag-new">NEW</span></span>
+          <details class="hint"><summary>What these are</summary><div><strong>Backstage / developer portal:</strong> a website teams use to create things themselves. <strong>Policy guardrails:</strong> Kyverno / OPA rules that stop unsafe setups. <strong>Observability as a platform feature:</strong> monitoring that teams get automatically (Prometheus, OpenTelemetry). <strong>AI platform product:</strong> an AI/LLM gateway, model serving or agent sandbox offered to <em>other</em> teams — not building AI models themselves.</div></details>
+          <div class="opts inline" data-g="extras" data-multi>
+            <button type="button" class="opt" data-v="backstage"><span class="mk"></span>Backstage / dev portal</button>
+            <button type="button" class="opt" data-v="policy"><span class="mk"></span>Policy guardrails</button>
+            <button type="button" class="opt" data-v="obs"><span class="mk"></span>Observability as a platform feature</button>
+            <button type="button" class="opt" data-v="ai"><span class="mk"></span>AI platform product</button>
+            <button type="button" class="opt" data-v="operator"><span class="mk"></span>Wrote a K8s operator / controller</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="q">Certifications <span class="tag-new">NEW</span></span>
+          <div class="help">A small supporting signal only. Certifications back up real experience; they never replace it.</div>
+          <div class="opts inline" data-g="certs" data-multi>
+            <button type="button" class="opt" data-v="kcna"><span class="mk"></span>KCNA</button>
+            <button type="button" class="opt" data-v="ckad"><span class="mk"></span>CKAD</button>
+            <button type="button" class="opt" data-v="cka"><span class="mk"></span>CKA</button>
+            <button type="button" class="opt" data-v="cks"><span class="mk"></span>CKS</button>
+            <button type="button" class="opt" data-v="cnpa"><span class="mk"></span>CNPA / CGOA / CAPA / CBA</button>
+            <button type="button" class="opt" data-v="cnpe"><span class="mk"></span>CNPE</button>
+            <button type="button" class="opt" data-v="vendor"><span class="mk"></span>AWS / Azure / HashiCorp</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="step">
+      <div class="step-head"><span class="kicker">Step 4</span><h2>Mindset and CV read</h2><p>Curiosity is the #1 thing BBD hires for — ahead of any tool.</p></div>
+      <div class="step-body">
+        <div class="field">
+          <span class="q">Do they show real investigative curiosity?</span>
+          <details class="hint"><summary>What it looks like</summary><div>BBD looks for someone who can't leave a puzzle unsolved. Look for home labs, reading docs or source, comparing options before choosing, researching tech unprompted. <strong>Ask:</strong> "Tell me about something that broke and you didn't know why — what did you actually do?" "I restarted it" or "I asked someone" = mechanical.</div></details>
+          <div class="opts inline" data-g="curiosity">
+            <button type="button" class="opt" data-v="yes"><span class="mk"></span>Yes, clearly</button>
+            <button type="button" class="opt" data-v="no"><span class="mk"></span>No, mechanical</button>
+            <button type="button" class="opt" data-v="unsure"><span class="mk"></span>Not sure</button>
+          </div>
+        </div>
+        <div class="field"><span class="q">Started as a software developer?</span>
+          <div class="opts inline" data-g="devbg">
+            <button type="button" class="opt" data-v="yes"><span class="mk"></span>Yes</button>
+            <button type="button" class="opt" data-v="no"><span class="mk"></span>No</button>
+            <button type="button" class="opt" data-v="unsure"><span class="mk"></span>Not sure</button>
+          </div></div>
+        <div class="field"><span class="q">Currently in a platform / cloud / DevOps / SRE job?</span>
+          <div class="opts inline" data-g="employed">
+            <button type="button" class="opt" data-v="yes"><span class="mk"></span>Yes</button>
+            <button type="button" class="opt" data-v="no"><span class="mk"></span>No</button>
+            <button type="button" class="opt" data-v="unsure"><span class="mk"></span>Not sure</button>
+          </div></div>
+        <div class="field"><span class="q">Recent bootcamp or fast-track into tech?</span>
+          <div class="opts inline" data-g="bootcamp">
+            <button type="button" class="opt" data-v="yes"><span class="mk"></span>Yes</button>
+            <button type="button" class="opt" data-v="no"><span class="mk"></span>No</button>
+            <button type="button" class="opt" data-v="unsure"><span class="mk"></span>Not sure</button>
+          </div></div>
+        <div class="field"><span class="q">Buzzwords, round numbers, or AI-sounding CV?</span>
+          <div class="help">e.g. "reduced costs by 99%", long tool lists with no named project.</div>
+          <div class="opts inline" data-g="buzzword">
+            <button type="button" class="opt" data-v="yes"><span class="mk"></span>Yes</button>
+            <button type="button" class="opt" data-v="no"><span class="mk"></span>No</button>
+            <button type="button" class="opt" data-v="unsure"><span class="mk"></span>Not sure</button>
+          </div></div>
+        <div class="field"><span class="q">Really an app, AI or data developer with "platform" in passing?</span>
+          <div class="opts inline" data-g="adjacent">
+            <button type="button" class="opt" data-v="yes"><span class="mk"></span>Yes</button>
+            <button type="button" class="opt" data-v="no"><span class="mk"></span>No</button>
+            <button type="button" class="opt" data-v="unsure"><span class="mk"></span>Not sure</button>
+          </div></div>
+        <div class="field"><label for="notes">Notes (optional)</label><textarea id="notes" placeholder="Notice period, referral, availability…"></textarea></div>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button type="submit" class="btn primary">Evaluate candidate</button>
+      <button type="button" class="btn ghost" id="exampleBtn">Fill with an example</button>
+      <button type="button" class="btn ghost" id="resetBtn">Clear</button>
+    </div>
+    <p class="note">Only the name is needed. Every answer you add makes the score more reliable.</p>
+  </form>
+
+  <div id="results" hidden>
+    <div class="res-top">
+      <div class="scorebox">
+        <svg viewBox="0 0 148 148" aria-hidden="true"><circle id="arc" cx="74" cy="74" r="70" fill="none" stroke="var(--good)" stroke-width="4" stroke-linecap="round"></circle></svg>
+        <span class="num" id="scoreNum">0.0</span><span class="of">out of 10</span>
+      </div>
+      <div class="verdict">
+        <span class="pill" id="pill">—</span>
+        <h2 id="headline">—</h2>
+        <p id="sub">—</p>
+        <span class="conf" id="conf"></span>
       </div>
     </div>
 
-    <div class="step-row reveal">
-      <div class="step-label">
-        <span class="n">STEP 02</span>
-        <h2>Technical signals</h2>
-        <p>The hands-on depth behind the buzzwords.</p>
-      </div>
-      <div class="step-content">
-        <div class="field">
-          <span class="fake-label">Kubernetes experience</span>
-          <div class="help">Driver vs. mechanic — deploying it vs. running it.</div>
-          <details class="mini-help"><summary>How do I tell from a CV or a chat?</summary>
-            <p>Software that runs and looks after many programs at once. A "cluster" is the group of computers it manages. <strong>Signals of "manages clusters":</strong> cluster upgrades, permissions/RBAC, autoscaling, writing custom Kubernetes tooling (operators/CRDs), being on-call for cluster problems. <strong>Signals of "deploys apps only":</strong> "deployed our app to Kubernetes", "used kubectl to release", no mention of who built or looks after the cluster itself. <strong>Ask this:</strong> "Who sets up and maintains your Kubernetes clusters — is that you, or a separate team you just deploy to?"</p>
-          </details>
-          <div class="tiles" data-group="k8s">
-            <button type="button" class="tile" data-value="none"><span class="dot"></span>Hasn't used it, or not mentioned</button>
-            <button type="button" class="tile" data-value="basic"><span class="dot"></span>Deploys apps, doesn't manage it</button>
-            <button type="button" class="tile" data-value="advanced"><span class="dot"></span>Manages clusters — automation, permissions, upgrades</button>
-            <button type="button" class="tile" data-value="unsure"><span class="dot"></span>Not sure yet</button>
-          </div>
-        </div>
-        <div class="field">
-          <span class="fake-label">Does their career read as ops, or as platform?</span>
-          <div class="help">This can override raw tool depth — read it carefully.</div>
-          <details class="mini-help"><summary>How do I tell from a CV or a chat?</summary>
-            <p>Even genuine, hands-on Kubernetes work can still read as "ops" if the surrounding career is general infrastructure admin (tickets, monitoring, on-call support) rather than building something other engineering teams use on their own. Hiring panels have declined technically competent CVs on this basis alone. <strong>Platform signals:</strong> "built a tool/portal/pipeline other teams use", "self-service", "developers can now provision X themselves", a named internal platform or framework they created. <strong>Ops signals:</strong> "responded to incidents", "monitored and maintained systems", "resolved tickets", "kept things running", nothing reusable that others use on their own. <strong>Ask this:</strong> "Tell me about something you built that other engineers or teams use on their own, without needing you involved each time." A specific, confident answer points to platform; a vague one, or a story about fixing and monitoring things, points to ops.</p>
-          </details>
-          <div class="tiles" data-group="opsPlatform">
-            <button type="button" class="tile" data-value="ops"><span class="dot"></span>Ops-flavored — tickets, monitoring, infra admin, production support</button>
-            <button type="button" class="tile" data-value="mixed"><span class="dot"></span>Mixed — some of both</button>
-            <button type="button" class="tile" data-value="platform"><span class="dot"></span>Platform-flavored — designs and builds capability other teams self-serve from</button>
-            <button type="button" class="tile" data-value="unsure"><span class="dot"></span>Not sure yet</button>
-          </div>
-        </div>
-        <div class="field">
-          <span class="fake-label">Infrastructure-as-code (e.g. Terraform)</span>
-          <div class="help">Builds infrastructure with code, not clicks.</div>
-          <details class="mini-help"><summary>How do I tell from a CV or a chat?</summary>
-            <p>"Infrastructure-as-code" means writing files that describe servers, networks and databases so a tool builds them automatically — the opposite of clicking around a cloud console by hand. <strong>Strong:</strong> named tools like Terraform, Pulumi or CloudFormation used for real environments, reusable modules they wrote themselves, mentions of "state" or "Terragrunt". <strong>Some:</strong> has worked inside an existing setup someone else designed. <strong>Ask this:</strong> "If you needed a new server or database tomorrow, would you write it in code, or set it up by hand in the console?"</p>
-          </details>
-          <div class="tiles cols-3" data-group="iac">
-            <button type="button" class="tile" data-value="none"><span class="dot"></span>None</button>
-            <button type="button" class="tile" data-value="some"><span class="dot"></span>Some</button>
-            <button type="button" class="tile" data-value="strong"><span class="dot"></span>Strong, hands-on</button>
-            <button type="button" class="tile" data-value="unsure" style="grid-column:1/-1;"><span class="dot"></span>Not sure yet</button>
-          </div>
-        </div>
-        <div class="field">
-          <span class="fake-label">Cloud platform depth (AWS / Azure / GCP)</span>
-          <div class="help">Basic: launches servers. Deep: networking, security, multi-account.</div>
-          <details class="mini-help"><summary>How do I tell from a CV or a chat?</summary>
-            <p><strong>Deep:</strong> designs how multiple accounts or projects are structured and secured, sets up networking between them, manages identity and access permissions, or works on cutting cloud costs. <strong>Basic:</strong> can launch a server or storage bucket but hasn't touched networking, security or account structure. <strong>Ask this:</strong> "Have you worked on things like networking, permissions, or how different accounts talk to each other — or mainly just launched individual servers or storage?"</p>
-          </details>
-          <div class="tiles cols-3" data-group="cloud">
-            <button type="button" class="tile" data-value="none"><span class="dot"></span>None</button>
-            <button type="button" class="tile" data-value="basic"><span class="dot"></span>Basic</button>
-            <button type="button" class="tile" data-value="deep"><span class="dot"></span>Deep</button>
-            <button type="button" class="tile" data-value="unsure" style="grid-column:1/-1;"><span class="dot"></span>Not sure yet</button>
-          </div>
-        </div>
-        <div class="field">
-          <span class="fake-label">Languages actually used</span>
-          <div class="help">Only what they've genuinely worked with.</div>
-          <div class="checks" data-group="langs">
-            <button type="button" class="chk" data-value="python"><span class="box"></span>Python</button>
-            <button type="button" class="chk" data-value="go"><span class="box"></span>Go</button>
-            <button type="button" class="chk" data-value="typescript"><span class="box"></span>TypeScript</button>
-            <button type="button" class="chk" data-value="bashonly"><span class="box"></span>Only Bash / scripting</button>
-          </div>
-        </div>
-        <div class="field">
-          <span class="fake-label">Built self-service tools for other engineers?</span>
-          <div class="help">The strongest signal of senior platform work — this one answer carries a lot of weight, so it's worth pinning down properly.</div>
-          <details class="mini-help"><summary>How do I tell from a CV or a chat?</summary>
-            <p>A self-service platform is anything that lets other engineers get what they need — a server, a pipeline, a database, a whole new environment — on their own, without asking a specialist each time. It doesn't have to use the words "self-service" on the CV. <strong>Signals it counts:</strong> "built a portal/framework/module other teams use", "developers can now provision X themselves", "cut onboarding from days to minutes", a named internal platform, template or "golden path". Being the sole person who built a company's infrastructure from scratch usually counts too, even without that exact phrasing. <strong>Signals it doesn't:</strong> maintaining a platform someone else designed, or setting things up manually on request each time. <strong>Ask this:</strong> "If another engineer needs a new server, pipeline or environment, do they come to you and you set it up, or can they get it themselves using something you built?" If they describe something concrete that others use on their own, choose "Yes" — don't default to "Not sure" just because the CV doesn't use this exact term.</p>
-          </details>
-          <div class="pillgroup" data-group="selfservice">
-            <button type="button" class="pill" data-value="yes">Yes</button>
-            <button type="button" class="pill" data-value="no">No</button>
-            <button type="button" class="pill" data-value="unsure">Not sure</button>
-          </div>
-        </div>
-        <div class="field">
-          <span class="fake-label">Modern platform tooling (GitOps and similar)</span>
-          <div class="help">ArgoCD, Helm, Crossplane, custom Kubernetes tooling.</div>
-          <details class="mini-help"><summary>What are these, in plain terms?</summary>
-            <p>These are toolkits that make running Kubernetes and cloud infrastructure more automated and less manual. You don't need to understand how each one works — just check whether any of these names (or similar ones) show up on the CV or come up when you ask: ArgoCD, Flux, GitOps, Helm, Crossplane, Kustomize, Backstage. "A little" fits one or two mentioned in passing; "Yes" fits real hands-on use of several.</p>
-          </details>
-          <div class="pillgroup" data-group="tooling">
-            <button type="button" class="pill" data-value="yes">Yes</button>
-            <button type="button" class="pill" data-value="some">A little</button>
-            <button type="button" class="pill" data-value="no">No</button>
-          </div>
-        </div>
-      </div>
+    <div class="block"><h3>Closest past profile</h3><div class="comp" id="comp"></div></div>
+
+    <div class="block">
+      <h3>"Ready to contribute" checklist</h3>
+      <div class="ready" id="ready"></div>
+      <p class="ready-sum" id="readySum"></p>
     </div>
 
-    <div class="step-row reveal">
-      <div class="step-label">
-        <span class="n">STEP 03</span>
-        <h2>Background &amp; CV read</h2>
-        <p>The mindset question below matters more than the entire technical checklist.</p>
-      </div>
-      <div class="step-content">
-        <div class="field">
-          <span class="fake-label">Do they show real investigative curiosity?</span>
-          <div class="help">The single biggest factor in most platform-team hiring decisions — bigger than any tool on the CV.</div>
-          <details class="mini-help"><summary>What does "real curiosity" look like?</summary>
-            <p>When something breaks or is unfamiliar, do they dig in — read the docs or source, test a hypothesis, tinker at home — rather than take the easiest path and stop? A junior with no production experience but this trait is worth more than a senior without it. Look for home-lab tinkering, researching a technology unprompted, or explaining <em>why</em> they chose an approach, not just that it worked. <strong>Ask this:</strong> "Tell me about a time something broke and you didn't know why — what did you actually do?" A mechanical answer ("I restarted it" / "I asked someone else") points to no; a specific story of digging in themselves points to yes.</p>
-          </details>
-          <div class="pillgroup" data-group="curiosity">
-            <button type="button" class="pill" data-value="yes">Yes, clearly</button>
-            <button type="button" class="pill" data-value="no">No, mechanical</button>
-            <button type="button" class="pill" data-value="unsure">Not sure</button>
-          </div>
-        </div>
-        <div class="field">
-          <span class="fake-label">Started as a developer before infrastructure?</span>
-          <div class="pillgroup" data-group="devbg">
-            <button type="button" class="pill" data-value="yes">Yes</button>
-            <button type="button" class="pill" data-value="no">No</button>
-            <button type="button" class="pill" data-value="unsure">Not sure</button>
-          </div>
-        </div>
-        <div class="field">
-          <span class="fake-label">Currently working in a platform/cloud/DevOps role?</span>
-          <div class="pillgroup" data-group="employed">
-            <button type="button" class="pill" data-value="yes">Yes</button>
-            <button type="button" class="pill" data-value="no">No</button>
-            <button type="button" class="pill" data-value="unsure">Not sure</button>
-          </div>
-        </div>
-        <div class="field">
-          <span class="fake-label">Recent bootcamp or fast-track transition?</span>
-          <div class="pillgroup" data-group="bootcamp">
-            <button type="button" class="pill" data-value="yes">Yes</button>
-            <button type="button" class="pill" data-value="no">No</button>
-            <button type="button" class="pill" data-value="unsure">Not sure</button>
-          </div>
-        </div>
-        <div class="field">
-          <span class="fake-label">CV leans on buzzwords or too-perfect claims?</span>
-          <div class="help">E.g. "improved performance by 99%" with no detail.</div>
-          <div class="pillgroup" data-group="buzzword">
-            <button type="button" class="pill" data-value="yes">Yes</button>
-            <button type="button" class="pill" data-value="no">No</button>
-            <button type="button" class="pill" data-value="unsure">Not sure</button>
-          </div>
-        </div>
-        <div class="field">
-          <span class="fake-label">Reads more like an app/AI/data dev, "platform" in passing?</span>
-          <div class="pillgroup" data-group="adjacent">
-            <button type="button" class="pill" data-value="yes">Yes</button>
-            <button type="button" class="pill" data-value="no">No</button>
-            <button type="button" class="pill" data-value="unsure">Not sure</button>
-          </div>
-        </div>
-      </div>
+    <div class="lists">
+      <div class="good"><span class="lbl">Strengths</span><ul id="strengths"></ul></div>
+      <div class="warn"><span class="lbl">Concerns and gaps</span><ul id="concerns"></ul></div>
     </div>
 
-    <div class="step-row reveal">
-      <div class="step-label">
-        <span class="n">STEP 04</span>
-        <h2>Anything else?</h2>
-        <p>Optional — whatever else matters.</p>
-      </div>
-      <div class="step-content">
-        <div class="field">
-          <label for="notes">Notes</label>
-          <textarea id="notes" placeholder="Referrals, availability, culture fit..."></textarea>
-        </div>
-      </div>
+    <div class="block"><h3>Ask these next</h3><ul class="qs" id="qs"></ul></div>
+
+    <div class="block">
+      <h3>Summary to paste</h3>
+      <textarea id="copyOut" readonly aria-label="Summary text"></textarea>
+      <div class="actions" style="padding-block:14px 0; justify-content:flex-start;"><button type="button" class="btn ghost" id="copyBtn">Copy summary</button></div>
     </div>
   </div>
 
-  <div class="band-alt band-line-top">
-    <div class="wrap submit-band reveal">
-      <button type="submit" class="btn-primary magnetic">Evaluate candidate</button>
-      <div class="required-note">Only the name is required — everything else improves accuracy.</div>
-    </div>
-  </div>
-</form>
-
-<div class="band-line-top" id="results">
-  <div class="wrap">
-    <div class="results-top">
-      <span class="results-eyebrow">Result</span>
-      <h2 id="resultName">Evaluation</h2>
-    </div>
-    <div class="confidence-row" id="confidenceRow">
-      <span class="confidence-dot" id="confidenceDot"></span>
-      <span id="confidenceText">Confidence: —</span>
-    </div>
-
-    <div class="score-panel">
-      <div class="gauge-wrap">
-        <svg viewBox="0 0 180 180">
-          <circle cx="90" cy="90" r="76" fill="none" stroke="var(--panel)" stroke-width="16"></circle>
-          <circle id="gaugeArc" cx="90" cy="90" r="76" fill="none" stroke="var(--good)" stroke-width="16" stroke-linecap="round"></circle>
-        </svg>
-        <div class="gauge-num">
-          <span class="score mono" id="scoreNum">0.0</span>
-          <span class="of">out of 10</span>
-        </div>
-      </div>
-      <div class="verdict-block">
-        <span class="verdict-pill" id="verdictPill">VERDICT</span>
-        <h3 id="verdictHeadline">—</h3>
-        <p id="verdictSub">—</p>
-      </div>
-    </div>
-
-    <div class="explain" id="explainText"></div>
-
-    <div class="result-lists">
-      <div class="result-col good">
-        <span class="rc-label">Key strengths</span>
-        <ul id="strengthsList"></ul>
-      </div>
-      <div class="result-col warn">
-        <span class="rc-label">Concerns &amp; gaps</span>
-        <ul id="concernsList"></ul>
-      </div>
-    </div>
-
-    <div class="reset-row">
-      <button type="button" class="btn-ghost" id="resetBtn">Start a new evaluation</button>
-    </div>
-  </div>
+  <footer><span>BBD · Platform Engineer screening</span><span>Model updated 23 Sep 2026 · a guide, not a verdict on its own</span></footer>
 </div>
-
-<footer>
-  <div class="wrap">
-    <span>Built for the platform engineering hiring pipeline</span>
-    <span>Scores are a guide, not a verdict on their own</span>
-  </div>
-</footer>
 
 <script>
 (function(){
-  const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const hasHover = window.matchMedia && window.matchMedia('(hover:hover)').matches;
-
-  /* decorative custom cursor — real cursor stays visible underneath */
-  if(!reducedMotion && hasHover){
-    const dot = document.getElementById('cursorDot');
-    const ring = document.getElementById('cursorRing');
-    let rx = 0, ry = 0, tx = 0, ty = 0;
-    window.addEventListener('mousemove', (e)=>{
-      dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px';
-      tx = e.clientX; ty = e.clientY;
-    });
-    function loop(){
-      rx += (tx - rx) * 0.18; ry += (ty - ry) * 0.18;
-      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
-      requestAnimationFrame(loop);
-    }
-    loop();
-    document.querySelectorAll('a, .btn-primary, .btn-ghost, summary').forEach(el=>{
-      el.addEventListener('mouseenter', ()=>ring.classList.add('big'));
-      el.addEventListener('mouseleave', ()=>ring.classList.remove('big'));
-    });
-  } else {
-    document.getElementById('cursorDot').style.display = 'none';
-    document.getElementById('cursorRing').style.display = 'none';
-  }
-
-  /* magnetic CTA */
-  if(!reducedMotion){
-    document.querySelectorAll('.magnetic').forEach(btn=>{
-      btn.addEventListener('mousemove', (e)=>{
-        const r = btn.getBoundingClientRect();
-        const x = e.clientX - r.left - r.width/2;
-        const y = e.clientY - r.top - r.height/2;
-        btn.style.transform = 'translate(' + (x*0.22) + 'px,' + (y*0.32) + 'px)';
+  const root=document.documentElement, btn=document.getElementById('themeBtn'), lbl=document.getElementById('themeLabel');
+  const sysDark=()=>window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDark=()=> root.dataset.theme ? root.dataset.theme==='dark' : sysDark();
+  const paint=()=>{ lbl.textContent = isDark() ? 'Light mode' : 'Dark mode'; };
+  let t=null; try{ t=localStorage.getItem('pfc-theme'); }catch(e){}
+  root.dataset.theme = (t==='dark') ? 'dark' : 'light';
+  paint();
+  btn.addEventListener('click', ()=>{ const next = isDark() ? 'light' : 'dark'; root.dataset.theme=next; try{ localStorage.setItem('pfc-theme', next); }catch(e){} paint(); });
+  if(window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', paint);
+})();
+(function(){
+  const S = {};
+  document.querySelectorAll('.opts[data-g]').forEach(g=>{
+    const k = g.dataset.g, multi = g.hasAttribute('data-multi');
+    S[k] = multi ? new Set() : null;
+    g.querySelectorAll('.opt').forEach(b=>{
+      b.setAttribute('aria-pressed','false');
+      b.addEventListener('click', ()=>{
+        const v = b.dataset.v;
+        if(multi){ b.classList.toggle('on'); b.classList.contains('on') ? S[k].add(v) : S[k].delete(v); b.setAttribute('aria-pressed', b.classList.contains('on')); }
+        else { g.querySelectorAll('.opt').forEach(x=>{x.classList.remove('on'); x.setAttribute('aria-pressed','false');}); b.classList.add('on'); b.setAttribute('aria-pressed','true'); S[k]=v; }
       });
-      btn.addEventListener('mouseleave', ()=>{ btn.style.transform = ''; });
     });
-  }
-
-  /* generative decorative strip under the hero */
-  (function drawArt(){
-    const canvas = document.getElementById('artCanvas');
-    function draw(){
-      const parent = canvas.parentElement;
-      const w = parent.clientWidth, h = parent.clientHeight;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = w * dpr; canvas.height = h * dpr;
-      const ctx = canvas.getContext('2d');
-      ctx.scale(dpr, dpr);
-      ctx.clearRect(0,0,w,h);
-      const palette = ['#FF5A1F', '#0E0E0C', '#D7D5C8'];
-      let s = 42;
-      function rnd(){ s = (s * 9301 + 49297) % 233280; return s / 233280; }
-      const lines = 6;
-      for(let i=0;i<lines;i++){
-        ctx.beginPath();
-        ctx.strokeStyle = palette[i % palette.length];
-        ctx.globalAlpha = 0.18 + rnd()*0.35;
-        ctx.lineWidth = 1.25 + rnd()*2.5;
-        const y0 = (h/lines) * i + h/(lines*2);
-        ctx.moveTo(0, y0);
-        ctx.bezierCurveTo(w*0.3, y0 - 20 - rnd()*26, w*0.7, y0 + 20 + rnd()*26, w, y0 + (rnd()-0.5)*20);
-        ctx.stroke();
-      }
-      ctx.globalAlpha = 1;
-    }
-    draw();
-    window.addEventListener('resize', draw);
-  })();
-
-  /* scroll reveal */
-  const revealEls = document.querySelectorAll('.reveal');
-  if(reducedMotion || !('IntersectionObserver' in window)){
-    revealEls.forEach(el=>el.classList.add('in'));
-  } else {
-    const io = new IntersectionObserver((entries)=>{
-      entries.forEach(entry=>{ if(entry.isIntersecting){ entry.target.classList.add('in'); io.unobserve(entry.target); } });
-    }, { threshold:0.1, rootMargin:'0px 0px -6% 0px' });
-    revealEls.forEach(el=>io.observe(el));
-  }
-
-  /* smooth scroll for hero cue */
-  document.getElementById('scrollCue').addEventListener('click', function(e){
-    e.preventDefault();
-    document.getElementById('form-start').scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block:'start' });
   });
+  const $ = id => document.getElementById(id);
+  const has = (k,v) => S[k] instanceof Set && S[k].has(v);
 
-  const state = {};
-
-  function wireGroup(sel, single){
-    document.querySelectorAll(sel).forEach(group=>{
-      const name = group.getAttribute('data-group');
-      if(single) state[name] = null; else state[name] = new Set();
-      group.querySelectorAll('button').forEach(btn=>{
-        btn.addEventListener('click', ()=>{
-          const v = btn.getAttribute('data-value');
-          if(single){
-            group.querySelectorAll('button').forEach(b=>b.classList.remove('selected'));
-            btn.classList.add('selected');
-            state[name] = v;
-          } else {
-            btn.classList.toggle('selected');
-            if(btn.classList.contains('selected')) state[name].add(v);
-            else state[name].delete(v);
-          }
-        });
-      });
-    });
-  }
-
-  wireGroup('.tiles[data-group]', true);
-  wireGroup('.pillgroup[data-group]', true);
-  wireGroup('.checks[data-group]', false);
-
-  const form = document.getElementById('evalForm');
-  const results = document.getElementById('results');
-
-  function val(id){ return document.getElementById(id).value.trim(); }
-
-  const SCORED_FIELDS = ['stream','k8s','iac','cloud','langs','selfservice','tooling','devbg','employed','bootcamp','buzzword','adjacent','opsPlatform','curiosity'];
-
-  function computeCompleteness(d){
-    let answered = 0;
-    SCORED_FIELDS.forEach(f=>{
-      const v = d[f];
-      if(f === 'langs'){ if(v && v.size > 0) answered++; }
-      else if(v !== null && v !== undefined && v !== '') answered++;
-    });
-    return { answered, total: SCORED_FIELDS.length, pct: answered / SCORED_FIELDS.length };
-  }
-
-  function computeScore(d){
+  function score(){
+    const d = S, st=[], cn=[], qs=[];
+    const years = parseFloat($('years').value); const hasY = !isNaN(years);
+    const nn = d.account === 'nn';
+    const go = has('langs','go'), py = has('langs','python'), ts = has('langs','typescript'), kcl = has('langs','kcl'), bash = has('langs','bashonly');
     let raw = 0;
-    const strengths = [];
-    const concerns = [];
-    const missing = [];
-    const years = parseFloat(d.years || 'NaN');
-    const hasYears = !isNaN(years);
-    const strict = d.strict === 'yes';
 
-    if(d.k8s === 'advanced'){ raw += 3; strengths.push('Real hands-on Kubernetes — manages clusters, not just deployments.'); }
-    else if(d.k8s === 'basic'){ raw += 1; concerns.push('Kubernetes exposure looks limited to deploying apps, not operating clusters.'); }
-    else if(d.k8s === 'none'){ concerns.push('No real Kubernetes experience found.'); }
-    else missing.push('Kubernetes experience wasn\'t specified.');
+    if(d.k8s==='advanced'){ raw+=3; st.push('Runs Kubernetes clusters — not just deploying to them.'); }
+    else if(d.k8s==='basic'){ raw+=1; cn.push('Kubernetes looks limited to deploying apps onto a cluster someone else runs.'); qs.push(['Kubernetes','"Who sets up and upgrades your clusters? Walk me through the last upgrade — what broke?"']); }
+    else if(d.k8s==='none'){ cn.push('No real Kubernetes experience — a hard requirement.'); }
+    else qs.push(['Kubernetes','"Walk me through the last time you built or upgraded a cluster. What broke and how did you fix it?"']);
 
-    if(d.iac === 'strong'){ raw += 2; strengths.push('Strong, hands-on infrastructure-as-code (e.g. Terraform).'); }
-    else if(d.iac === 'some'){ raw += 1; concerns.push('Only some infrastructure-as-code exposure — worth probing depth.'); }
-    else if(d.iac === 'none'){ concerns.push('No infrastructure-as-code experience found.'); }
-    else missing.push('Infrastructure-as-code depth wasn\'t specified.');
+    if(d.crossplane==='authored'){ raw+=2.5; st.push('Has written Crossplane compositions — this is the client\'s actual day job.'); }
+    else if(d.crossplane==='used'){ raw+=1; st.push('Has worked with Crossplane.'); qs.push(['Crossplane','"Did you write the compositions or XRDs yourself, or use ones someone else built?"']); }
 
-    if(d.cloud === 'deep'){ raw += 2; strengths.push('Deep cloud platform experience — networking, security, multi-account.'); }
-    else if(d.cloud === 'basic'){ raw += 0.7; concerns.push('Cloud experience looks basic (e.g. just launching servers or storage).'); }
-    else if(d.cloud === 'none'){ concerns.push('No meaningful cloud platform experience found.'); }
-    else missing.push('Cloud platform depth wasn\'t specified.');
+    if(d.iac==='strong'){ raw+=2; st.push('Strong production infrastructure-as-code (Terraform or similar).'); }
+    else if(d.iac==='some'){ raw+=1; if(d.crossplane!=='authored') qs.push(['Infrastructure-as-code','"How do you handle Terraform state, modules and multiple environments?"']); }
+    else if(d.iac==='none' && d.crossplane!=='authored' && d.crossplane!=='used'){ cn.push('No infrastructure-as-code — neither Terraform nor Crossplane.'); }
+    else if(d.iac!=='none' && d.crossplane!=='authored') qs.push(['Infrastructure-as-code','"If you needed a new database tomorrow, would you write it in code or click it in the console?"']);
 
-    const langs = d.langs || new Set();
-    const hasPy = langs.has('python'), hasGo = langs.has('go'), hasTs = langs.has('typescript'), bashOnly = langs.has('bashonly');
-    if(hasPy && hasGo){ raw += 1.5; strengths.push('Has both Python and Go — the preferred language pairing.'); }
-    else if(hasPy || hasGo){ raw += 0.7; concerns.push('Only one of Python/Go confirmed — the other is preferred too.'); }
-    else if(!bashOnly && langs.size===0){ missing.push('Programming languages weren\'t specified.'); }
-    if(hasTs){ raw += 0.5; }
-    if(bashOnly && !hasPy && !hasGo){ raw = Math.max(0, raw - 0.5); concerns.push('Scripting (Bash) only — no real programming language confirmed.'); }
+    if(d.cloud==='deep'){ raw+=2; st.push('Deep cloud — identity, networking and account structure.'); }
+    else if(d.cloud==='basic'){ raw+=0.7; cn.push('Cloud experience looks basic (servers and storage only).'); qs.push(['Cloud','"Have you set up networking, permissions or how accounts talk to each other — or mostly launched servers?"']); }
+    else if(d.cloud==='none'){ cn.push('No meaningful cloud experience.'); }
+    else qs.push(['Cloud','"Which cloud do you know best, and have you worked on its networking and permissions?"']);
+    if(has('clouds','aws') && has('clouds','azure')) st.push('Both AWS and Azure — The client runs both.');
+    if(has('clouds','databricks')){ raw+=0.4; st.push('Databricks exposure — a SaaS the platform provisions.'); }
+    if(S.clouds.size && !has('clouds','aws') && !has('clouds','azure')) cn.push('GCP-only cloud — the client runs on AWS and Azure; skills transfer but expect ramp-up.');
 
-    if(d.selfservice === 'yes'){ raw += 1.5; strengths.push('Has built self-service tooling for other engineers — the strongest signal of senior platform work.'); }
-    else if(d.selfservice === 'unsure'){ raw += 0.4; missing.push('Not confirmed whether they\'ve built self-service tooling for other engineers.'); }
-    else if(d.selfservice === 'no'){ concerns.push('No evidence of building self-service tooling for other engineers.'); }
+    if(d.gitops==='yes'){ raw+=1; st.push('Hands-on GitOps (ArgoCD / Flux) — how the client delivers change.'); }
+    else if(d.gitops==='some') raw+=0.4;
 
-    if(d.tooling === 'yes'){ raw += 1; strengths.push('Comfortable with modern platform tooling (GitOps, Helm, Crossplane, or similar).'); }
-    else if(d.tooling === 'some'){ raw += 0.5; }
+    if(go && py){ raw+=2; st.push('Writes both Go and Python — the pairing the client asks for.'); }
+    else if(go){ raw+=1.5; st.push('Writes Go — the language the client\'s platform tools are built in.'); }
+    else if(py){ raw+=0.7; cn.push('No Go. It\'s the client\'s main platform language.'); qs.push(['Go','"Have you written any Go? What was it for — a tool, a controller, a CLI?"']); }
+    else if(!bash && S.langs.size===0) qs.push(['Coding','"What\'s the last piece of code you wrote for platform work, and what was it for?"']);
+    if(ts){ raw+=0.5; st.push('TypeScript — named as a plus by the platform lead.'); }
+    if(kcl){ raw+=0.5; st.push('KCL — the language the client writes Crossplane compositions in.'); }
+    if(bash && !go && !py && !ts){ cn.push('Bash / scripting only — not impressive for this bar.'); }
 
-    if(d.employed === 'yes'){ raw += 1; }
-    else if(d.employed === 'no'){ concerns.push('Not currently working in a platform/cloud/DevOps-type role.'); }
-    else missing.push('Current role type wasn\'t confirmed.');
+    if(d.selfservice==='yes'){ raw+=1.5; st.push('Built self-service tooling other engineers use on their own.'); }
+    else if(d.selfservice==='no'){ cn.push('No self-service tooling built for other engineers.'); }
+    else qs.push(['Self-service','"If another engineer needs a new environment, do they come to you, or use something you built?"']);
 
-    if(d.devbg === 'yes'){ raw += 0.5; strengths.push('Started out as a software developer — tends to produce stronger platform engineers.'); }
-    else if(d.devbg === 'unsure') missing.push('Prior development background wasn\'t confirmed.');
+    if(d.scale==='yes'){ raw+=1; st.push('Platform work for many teams / clusters at real scale.'); }
+    else if(d.scale==='no') cn.push('No sign of multi-team scale — real platform work usually lives in large organisations.');
 
-    // seasoned-professional floor credit — raw tenure still counts for something
-    // even when the rest of the profile is ops-flavoured or thin on modern tooling
-    if(hasYears && years >= 10 && d.employed === 'yes') raw += 1.5;
+    const ex = S.extras; let exPts = 0;
+    if(ex.has('backstage')){ exPts+=0.4; st.push('Backstage / developer portal work.'); }
+    if(ex.has('policy')){ exPts+=0.3; st.push('Policy guardrails (Kyverno / OPA).'); }
+    if(ex.has('obs')){ exPts+=0.3; st.push('Observability delivered as a platform feature.'); }
+    if(ex.has('ai')){ exPts+=0.4; st.push('AI platform product offered to other teams (gateway / serving / sandbox).'); }
+    if(ex.has('operator')){ exPts+=0.6; st.push('Has written a Kubernetes operator or controller.'); }
+    raw += Math.min(exPts, 1.5);
 
-    // mindset/curiosity — the #1 hiring criterion for this bar, ahead of the
-    // technical checklist. A junior with no experience but this trait is worth
-    // more than a senior without it, so it can rescue an otherwise-thin junior.
-    if(d.curiosity === 'yes'){
-      raw += 1.5;
-      strengths.push('Shows real investigative curiosity — digs into problems rather than taking the easiest path.');
-      if(hasYears && years <= 3) raw += 1.5;
-    } else if(d.curiosity === 'unsure'){
-      missing.push('Investigative curiosity / mindset wasn\'t confirmed.');
+    const c = S.certs; let cp = 0;
+    if(c.has('cka')) cp+=0.4; if(c.has('cks')) cp+=0.5; if(c.has('cnpe')) cp+=0.7;
+    if(c.has('ckad')) cp+=0.25; if(c.has('cnpa')) cp+=0.15; if(c.has('vendor')) cp+=0.1;
+    cp = Math.min(cp, 1);
+    raw += cp;
+    if(c.has('cka')||c.has('cks')||c.has('cnpe')) st.push('Hands-on Kubernetes certification ('+['cka','cks','cnpe'].filter(x=>c.has(x)).map(x=>x.toUpperCase()).join(', ')+').');
+    if(c.size && cp < 0.3 && d.k8s!=='advanced') cn.push('Certifications here are multiple-choice or vendor exams — they prove vocabulary, not the work.');
+
+    if(d.employed==='yes') raw+=1; else if(d.employed==='no') cn.push('Not currently in a platform / cloud / DevOps role.');
+    if(d.devbg==='yes'){ raw+=0.5; st.push('Developer background — devs usually make the best platform engineers.'); }
+    else if(d.devbg==='no' && d.opsPlatform!=='platform') cn.push('No development background — the platform lead is happy to decline basic DevOps without one.');
+    if(hasY && years>=10 && d.employed==='yes') raw+=0.8;
+
+    if(d.curiosity==='yes'){ raw+=1.5; st.push('Real investigative curiosity — the #1 hiring criterion.'); if(hasY && years<=3) raw+=1.5; }
+    else if(d.curiosity!=='no') qs.push(['Curiosity','"Tell me about something that broke and you didn\'t know why. What did you actually do?"']);
+
+    if(d.opsPlatform==='platform'){ raw+=1; st.push('Career reads as building the platform, not running on one.'); }
+    else if(d.opsPlatform!=='ops' && d.opsPlatform!=='mixed') qs.push(['Platform vs ops','"Tell me about something you built that other teams use without you being involved each time."']);
+
+    let s = raw / 19 * 10;
+
+    // gates
+    if(d.stream==='platform' && d.selfservice!=='yes'){ s=Math.min(s, nn ? (d.curiosity==='yes'?6.5:6) : 6.5); cn.push('For Platform Engineer, no confirmed self-service work caps this at strong-junior level.'); }
+    else if(d.stream==='cloud' && d.cloud==='deep') s=Math.min(10,s+1);
+    else if(d.stream==='devops') s=Math.min(10,s+1);
+
+    if(d.opsPlatform==='ops'){ s=Math.min(s, nn?3:5.5); cn.push('Deploys and maintains rather than builds the platform — BBD has declined strong CVs on this alone.'); }
+    else if(d.opsPlatform==='mixed'){ s=Math.min(s, nn?5.5:7); cn.push('Mostly running things, some building — probe hard for a self-service story.'); }
+    if(d.curiosity==='no'){ s=Math.min(s,3.5); cn.push('Mechanical, easiest-path mindset — a decline on its own, "even as dev".'); }
+    if(d.employed==='no') s=Math.min(s, nn?3:5);
+    if(nn && !go && !py && (S.langs.size>0 || bash)){ s=Math.min(s,3.5); cn.push('This account needs Python and Go — neither is there.'); }
+    else if(nn && !go && S.langs.size>0){ s=Math.min(s,7.5); }
+    if(d.k8s==='none' && nn){ s=Math.min(s,2.5); }
+    if(d.adjacent==='yes'){ s=Math.min(s,3); cn.push(ex.has('ai') ? 'Reads as the AI/data team itself. the client\'s platform team serves those teams — it doesn\'t hire them.' : 'Reads as an app / AI / data developer with "platform" in passing.'); }
+    if(d.bootcamp==='yes' && hasY && years<3){ s=Math.min(s,3); cn.push('Recent bootcamp plus little experience — this account wants juniors already doing platform work.'); }
+    if(d.buzzword==='yes'){ s=Math.max(0,s-1.5); cn.push('Buzzword or too-perfect CV — treat every listed skill as unproven until probed.'); }
+    const claimsTop = (d.k8s==='advanced') + (d.iac==='strong'||d.crossplane==='authored') + (d.cloud==='deep') >= 2;
+    if(hasY && years<2 && claimsTop){ s=Math.max(0,s-1); cn.push('Claims deep mastery in several areas with under 2 years — verify closely.'); }
+    if(d.rateHigh==='yes'){
+      const junior = d.curiosity==='yes' && hasY && years<=4;
+      if(junior){ st.push('Rate a bit high, but BBD pays for high-potential juniors rather than lose them.'); }
+      else if(s>=8){ s-=0.4; cn.push('Rate is high but the profile is strong — negotiate to band.'); }
+      else if(s>=5){ s-=1.2; cn.push('Rate is high for a borderline profile — past panels have declined similar profiles partly for this.'); }
+      else { s-=0.3; cn.push('Rate is high, though it isn\'t the main problem.'); }
     }
-
-    if(d.opsPlatform === 'platform'){ raw += 1; strengths.push('Career reads as platform-flavored — builds capability other teams self-serve from.'); }
-    else if(d.opsPlatform === null || d.opsPlatform === undefined || d.opsPlatform === 'unsure'){ missing.push('Ops-vs-platform read wasn\'t specified.'); }
-
-    const maxRaw = 16.5;
-    let score = (raw / maxRaw) * 10;
-
-    // role-stream gate — curious candidates aren't held to the same
-    // self-service-evidence ceiling; potential matters more than checklist completeness
-    if(d.stream === 'platform'){
-      if(d.selfservice !== 'yes'){
-        const selfserviceCap = strict ? (d.curiosity === 'yes' ? 6.5 : 6) : 6.5;
-        score = Math.min(score, selfserviceCap);
-        concerns.push('Platform Engineer is the strictest stream — without confirmed self-service/platform-building work, this caps as a strong-junior profile at best.');
-      }
-    } else if(d.stream === 'cloud'){
-      if(d.cloud === 'deep') score = Math.min(10, score + 1);
-    } else if(d.stream === 'devops'){
-      score = Math.min(10, score + 1);
-    } else {
-      missing.push('Role stream wasn\'t selected — scoring used a neutral bar.');
-    }
-
-    // ops-vs-platform gate — can override raw technical depth entirely.
-    // "Past panels have declined technically competent CVs on this basis alone."
-    if(d.opsPlatform === 'ops'){
-      score = Math.min(score, strict ? 3 : 5.5);
-      concerns.push('Career reads as ops/admin (tickets, monitoring, infra support) rather than platform work — even genuine Kubernetes depth can\'t offset this on its own.');
-    } else if(d.opsPlatform === 'mixed'){
-      score = Math.min(score, strict ? 5.5 : 7);
-    }
-
-    // mindset gate
-    if(d.curiosity === 'no'){
-      score = Math.min(score, 3.5);
-      concerns.push('Reads as mechanical / easiest-path rather than investigative — treated as a decline signal on its own, regardless of technical breadth.');
-    }
-
-    // hard requirement gates — tighter under a strict-tier account
-    if(d.employed === 'no') score = Math.min(score, strict ? 3 : 5);
-    if(strict && !hasPy && !hasGo){
-      score = Math.min(score, 3.5);
-      concerns.push('This account requires entry-level Python AND Go — neither is confirmed here.');
-    }
-
-    if(d.adjacent === 'yes'){
-      score = Math.min(score, 3);
-      concerns.push('Reads like an app/AI/data profile with "platform" mentioned in passing, rather than day-to-day platform work.');
-    }
-    if(d.bootcamp === 'yes' && hasYears && years < 3){
-      score = Math.min(score, 3);
-      concerns.push('Recent bootcamp transition combined with limited experience — high ramp-up risk for this bar.');
-    }
-    if(d.buzzword === 'yes'){
-      score = Math.max(0, score - 1.5);
-      concerns.push('CV leans on buzzwords or vague, too-perfect claims — treat listed skills with scepticism until probed.');
-    }
-
-    const claimsTop = (d.k8s === 'advanced') + (d.iac === 'strong') + (d.cloud === 'deep') >= 2;
-    if(hasYears && years < 2 && claimsTop){
-      score = Math.max(0, score - 1);
-      concerns.push('Claims deep technical mastery across several areas despite under 2 years of experience — worth verifying closely in interview rather than taking at face value.');
-    }
-    const anyStrongSignal = d.k8s === 'advanced' || d.iac === 'strong' || d.cloud === 'deep' || d.selfservice === 'yes' || d.tooling === 'yes';
-    if(hasYears && years >= 8 && !anyStrongSignal){
-      concerns.push('Long tenure (8+ years) but no strong technical signal confirmed anywhere — check they haven\'t plateaued in scope.');
-    }
-
-    // commercial fit — a high ask barely matters for a promising junior, matters
-    // moderately for an otherwise-strong candidate, and matters most for someone
-    // already borderline on substance
-    if(d.rateHigh === 'yes'){
-      const juniorPotential = d.curiosity === 'yes' && hasYears && years <= 4;
-      if(juniorPotential){ /* documented precedent: don't let a small rate gap cost a high-potential junior */ }
-      else if(d.curiosity === 'yes'){ score -= 0.5; concerns.push('Rate ask is a little high, but strong potential makes this worth negotiating rather than declining.'); }
-      else if(score >= 8){ score -= 0.5; concerns.push('Rate ask is high but this is a strong profile — worth negotiating.'); }
-      else if(score >= 5){ score -= 1.2; concerns.push('Rate ask is high relative to a borderline technical profile.'); }
-      else { score -= 0.3; concerns.push('Rate ask is high, though it isn\'t the main issue here.'); }
-    }
-
-    score = Math.max(0, Math.min(10, score));
-
-    if(strengths.length === 0) strengths.push('No standout strengths identified from the answers given.');
-
-    return { score, strengths, concerns, missing };
+    s = Math.max(0, Math.min(10, s));
+    if(!st.length) st.push('Nothing stands out from the answers given.');
+    return { s, st, cn, qs, nn, go, py, ts, kcl };
   }
 
-  function bandFor(score){
-    if(score >= 8) return { key:'good', label:'MUST HIRE', headline:'Fast-track to interview', sub:'Matches the profile of the team\'s strongest hires.' };
-    if(score >= 6) return { key:'good', label:'INTERVIEW', headline:'Strong candidate — interview', sub:'Meets the core bar; worth a full technical interview.' };
-    if(score >= 4) return { key:'warn', label:'BORDERLINE', headline:'Screen further first', sub:'Mixed signals — a short technical screen before deciding either way.' };
-    if(score >= 2) return { key:'bad', label:'LIKELY DECLINE', headline:'Weak fit for this bar', sub:'Missing several core requirements for the role.'};
-    return { key:'bad', label:'DECLINE', headline:'Do not proceed', sub:'Does not meet the baseline for this role.' };
+  function readiness(r){
+    const d=S, ex=S.extras, c=S.certs;
+    const items = [
+      ['Works confidently on Kubernetes', d.k8s==='advanced'?'y':d.k8s==='basic'?'p':'n'],
+      ['Delivers change through Argo / GitOps', d.gitops==='yes'?'y':d.gitops==='some'?'p':'n'],
+      ['Knows the AWS / Azure / SaaS the platform provisions', d.cloud==='deep'&&(has('clouds','aws')||has('clouds','azure')||S.clouds.size===0)?'y':(d.cloud==='deep'||d.cloud==='basic')?'p':'n'],
+      ['Writes platform code in Go, TypeScript, KCL or Python', (r.go||r.ts||r.kcl)&&(ex.has('operator')||r.go)?'y':(r.py||r.ts||r.kcl)?'p':'n'],
+      ['Authors Crossplane APIs', d.crossplane==='authored'?'y':d.crossplane==='used'?'p':'n'],
+      ['Operates it — observability, policy, troubleshooting', (ex.has('obs')||ex.has('policy'))&&d.k8s==='advanced'?'y':(ex.has('obs')||ex.has('policy')||c.has('cka')||c.has('cks'))?'p':'n'],
+      ['Designs for many teams / clusters', d.scale==='yes'?'y':d.selfservice==='yes'?'p':'n'],
+      ['Delivers AI serving / gateways as platform products', ex.has('ai')?'y':has('clouds','databricks')?'p':'n']
+    ];
+    const pts = items.reduce((a,[_,v])=>a+(v==='y'?1:v==='p'?0.5:0),0);
+    let lvl = pts>=6.5?'senior':pts>=4?'intermediate':pts>=2?'junior':'below junior';
+    return { items, pts, lvl };
   }
 
-  function animateCount(el, to, duration){
-    if(reducedMotion){ el.textContent = to.toFixed(1); return; }
-    const start = performance.now();
-    function tick(now){
-      const p = Math.min(1, (now-start)/duration);
-      const eased = 1 - Math.pow(1-p, 3);
-      el.textContent = (eased*to).toFixed(1);
-      if(p < 1) requestAnimationFrame(tick);
-      else el.textContent = to.toFixed(1);
-    }
-    requestAnimationFrame(tick);
+  function comparable(r){
+    const d=S;
+    if(d.curiosity==='no') return ['Declined: solid CV, wrong mindset','A past candidate with a good CV was declined purely because they took the easiest path and showed no interest in how things work.'];
+    if(d.adjacent==='yes') return ['Declined: AI / data engineer','The platform team serves AI and data teams; it doesn\'t hire them into this role.'];
+    if(d.opsPlatform==='ops' && d.k8s==='advanced') return ['Declined: ops engineer who built clusters','Built several Kubernetes clusters from scratch and was still judged "very much an ops guy".'];
+    if((d.opsPlatform==='ops'||d.opsPlatform==='mixed') && d.gitops==='yes' && d.selfservice!=='yes') return ['Declined: senior DevOps lead','Strong Kubernetes / Argo / Terraform tool list, but deployed and maintained workloads rather than building the platform.'];
+    if(d.crossplane==='authored' && r.go && d.selfservice==='yes') return ['Benchmark hire profile','Crossplane compositions, Go tooling, GitOps and a platform other teams self-serve from. This is the profile BBD wants most.'];
+    if(d.selfservice==='yes' && d.k8s==='advanced') return ['Offered: platform team lead','Led a team building an internal developer portal. Offered at a strong-intermediate level.'];
+    if(parseFloat($('years').value)<=3 && d.curiosity==='yes') return ['Hired: strong junior','Terraform, Python, containers, a home lab and research done unprompted. Hired slightly above rate for potential.'];
+    if((d.k8s==='none'||d.k8s==='basic') && d.cloud==='basic') return ['Declined: eager but thin','Good culture fit, but no real Kubernetes and cloud limited to servers and storage.'];
+    if(d.iac==='strong' && d.cloud==='deep' && !r.go && !r.py) return ['Declined: cloud engineer, no code','Strong cloud and Terraform but no Python or Go — "more of a cloud engineer".'];
+    if(d.rateHigh==='yes' && d.opsPlatform!=='platform') return ['Declined: modern tools, high rate','Good modern toolset but "more ops than platform and too expensive for the level".'];
+    return ['Declined: standard DevOps engineer','Good Terraform / multi-cloud DevOps work with no self-service story — "doesn\'t sound like a platform engineer".'];
   }
 
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-    const name = val('name') || 'This candidate';
+  function band(s){
+    if(s>=8) return ['good','Must interview','Fast-track to interview','Matches the profile of BBD\'s strongest hires.'];
+    if(s>=6) return ['good','Interview','Worth a full interview','Meets the core bar. Use the questions below to test the gaps.'];
+    if(s>=4) return ['warn','Screen first','Short screen before deciding','Mixed signals. A 15-minute call on the questions below should settle it.'];
+    if(s>=2) return ['bad','Likely decline','Weak fit for this bar','Missing several core requirements.'];
+    return ['bad','Decline','Do not proceed','Does not meet the baseline for this role.'];
+  }
 
-    const d = {
-      stream: state.stream, k8s: state.k8s, iac: state.iac, cloud: state.cloud, langs: state.langs,
-      selfservice: state.selfservice, tooling: state.tooling, devbg: state.devbg, employed: state.employed,
-      bootcamp: state.bootcamp, buzzword: state.buzzword, adjacent: state.adjacent, years: val('years'),
-      opsPlatform: state.opsPlatform, curiosity: state.curiosity, strict: state.strict, rateHigh: state.rateHigh
-    };
+  const FIELDS=['account','stream','opsPlatform','selfservice','scale','k8s','crossplane','iac','cloud','gitops','langs','curiosity','devbg','employed','bootcamp','buzzword','adjacent'];
 
-    const { score, strengths, concerns, missing } = computeScore(d);
-    const band = bandFor(score);
-    const completeness = computeCompleteness(d);
+  function render(){
+    const r = score(), R = readiness(r), b = band(r.s), comp = comparable(r);
+    const name = $('name').value.trim() || 'This candidate';
+    $('results').hidden = false;
+    $('scoreNum').textContent = r.s.toFixed(1);
+    const C = 2*Math.PI*70, arc=$('arc');
+    arc.style.strokeDasharray=C; arc.style.strokeDashoffset = C - r.s/10*C; arc.style.stroke='var(--'+b[0]+')';
+    const pill=$('pill'); pill.textContent=b[1]; pill.style.background='var(--'+b[0]+'-soft)'; pill.style.color='var(--'+b[0]+')';
+    $('headline').textContent = name+' — '+b[2].toLowerCase();
+    $('sub').textContent = b[3];
+    const answered = FIELDS.filter(f=> S[f] instanceof Set ? S[f].size>0 : (S[f] && S[f]!=='unsure')).length;
+    const pct = answered/FIELDS.length;
+    $('conf').textContent = 'Confidence: '+(pct>=0.8?'high':pct>=0.5?'medium':'low')+' — '+answered+' of '+FIELDS.length+' questions answered with a firm answer.';
 
-    document.getElementById('resultName').textContent = name;
-    animateCount(document.getElementById('scoreNum'), score, 900);
+    $('comp').innerHTML=''; const cb=document.createElement('b'); cb.textContent=comp[0]; $('comp').append(cb, document.createTextNode(' — '+comp[1]));
 
-    const pill = document.getElementById('verdictPill');
-    pill.textContent = band.label;
-    pill.style.background = 'var(--' + band.key + '-soft)';
-    pill.style.color = 'var(--' + band.key + ')';
-    document.getElementById('verdictHeadline').textContent = band.headline;
-    document.getElementById('verdictSub').textContent = band.sub;
-
-    let confKey = 'bad', confLabel = 'Low';
-    if(completeness.pct >= 0.8){ confKey = 'good'; confLabel = 'High'; }
-    else if(completeness.pct >= 0.5){ confKey = 'warn'; confLabel = 'Medium'; }
-    document.getElementById('confidenceDot').style.background = 'var(--' + confKey + ')';
-    document.getElementById('confidenceText').textContent =
-      'Confidence: ' + confLabel + ' — based on ' + completeness.answered + ' of ' + completeness.total + ' technical answers.';
-
-    const arc = document.getElementById('gaugeArc');
-    const circumference = 2 * Math.PI * 76;
-    arc.style.strokeDasharray = circumference;
-    arc.style.strokeDashoffset = reducedMotion ? (circumference - (score/10)*circumference) : circumference;
-    arc.style.stroke = 'var(--' + band.key + ')';
-    requestAnimationFrame(()=>{
-      arc.style.transition = 'stroke-dashoffset .9s cubic-bezier(.19,1,.22,1), stroke .3s ease';
-      arc.style.strokeDashoffset = circumference - (score/10) * circumference;
+    const rd=$('ready'); rd.innerHTML='';
+    R.items.forEach(([t,v])=>{
+      const row=document.createElement('div'); row.className='r '+v;
+      row.innerHTML='<span class="ic">'+(v==='y'?'✓':v==='p'?'~':'–')+'</span><span></span><span class="st">'+(v==='y'?'Evidenced':v==='p'?'Partial':'Not shown')+'</span>';
+      row.children[1].textContent=t; rd.appendChild(row);
     });
+    $('readySum').textContent = R.pts+' of 8 — reads as '+R.lvl+' against the seniority ladder (junior ≈ 1–3, intermediate ≈ 1–4 and 6, senior ≈ most of the eight).';
 
-    const streamLabel = { platform:'Platform Engineer', cloud:'Cloud Engineer', devops:'DevOps' }[d.stream] || 'the role';
-    const strictLabel = d.strict === 'yes' ? ' on the stricter account bar' : '';
-    document.getElementById('explainText').textContent =
-      name + ' scores ' + score.toFixed(1) + ' out of 10 against the bar for ' + streamLabel + strictLabel + '. ' +
-      'Two things carry more weight than any single tool on the CV: whether their career reads as building a platform other teams self-serve from (rather than reactive ops/admin work), and whether they show real investigative curiosity — the #1 hiring criterion for this bar, ahead of the technical checklist. Kubernetes depth, infrastructure-as-code, cloud experience and language fit still matter, but red flags such as an ops-flavored career, a mechanical/easiest-path mindset, buzzword-heavy CVs, adjacent (app/AI/data) profiles, or a rate ask well above the demonstrated level can pull the score down regardless of listed tools.';
+    const fill=(id,arr,empty)=>{ const u=$(id); u.innerHTML=''; (arr.length?arr:[empty]).forEach(t=>{ const li=document.createElement('li'); li.textContent=t; u.appendChild(li); }); };
+    fill('strengths', r.st, '—');
+    fill('concerns', r.cn, 'No concerns flagged from the answers given.');
+    const q=$('qs'); q.innerHTML='';
+    const seenQ=new Set(); const list=r.qs.filter(([k])=>!seenQ.has(k)&&seenQ.add(k)).slice(0,6);
+    if(!list.length){ const li=document.createElement('li'); li.textContent='No obvious gaps — use the interview to test depth on their strongest claim.'; q.appendChild(li); }
+    list.forEach(([k,t])=>{ const li=document.createElement('li'); const bb=document.createElement('b'); bb.textContent=k+': '; li.append(bb, document.createTextNode(t)); q.appendChild(li); });
 
-    function fillList(elId, items, emptyMsg){
-      const el = document.getElementById(elId);
-      el.innerHTML = '';
-      if(items.length === 0){
-        const li = document.createElement('li');
-        li.className = 'empty-note';
-        li.style.animation = 'none';
-        li.style.opacity = '1';
-        li.textContent = emptyMsg;
-        el.appendChild(li);
-        return;
-      }
-      items.forEach((text, i)=>{
-        const li = document.createElement('li');
-        li.style.animationDelay = (i*70) + 'ms';
-        li.textContent = text;
-        el.appendChild(li);
-      });
-    }
+    const title=$('title').value.trim(), emp=$('employer').value.trim(), yrs=$('years').value, rate=$('rate').value.trim();
+    const lines=[
+      name+(title||emp?' — '+[title,emp].filter(Boolean).join(', '):'')+(yrs?' · '+yrs+' yrs':'')+(rate?' · '+rate:''),
+      'Score: '+r.s.toFixed(1)+'/10 — '+b[1]+(r.nn?' (strict bar)':''),
+      'Closest past profile: '+comp[0],
+      'Readiness: '+R.pts+'/8 ('+R.lvl+')',
+      '',
+      'Strengths:', ...r.st.map(x=>'• '+x),
+      '', 'Concerns:', ...(r.cn.length?r.cn:['None flagged']).map(x=>'• '+x)
+    ];
+    if(list.length){ lines.push('', 'Ask next:', ...list.map(([k,t])=>'• '+k+': '+t)); }
+    const notes=$('notes').value.trim(); if(notes) lines.push('', 'Notes: '+notes);
+    $('copyOut').value = lines.join('\n');
+    $('results').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth', block:'start'});
+  }
 
-    fillList('strengthsList', strengths, 'Nothing stood out from the answers given.');
-    const concernsAndMissing = concerns.concat(missing.map(m => m + ' (fill this in for a more accurate score.)'));
-    fillList('concernsList', concernsAndMissing, 'No concerns or missing information flagged.');
+  $('evalForm').addEventListener('submit', e=>{ e.preventDefault(); render(); });
 
-    results.classList.add('show');
-    results.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block:'start' });
+  function clearAll(){
+    $('evalForm').reset();
+    document.querySelectorAll('.opt.on').forEach(x=>{x.classList.remove('on'); x.setAttribute('aria-pressed','false');});
+    Object.keys(S).forEach(k=> S[k] instanceof Set ? S[k].clear() : S[k]=null);
+    $('results').hidden = true;
+  }
+  $('resetBtn').addEventListener('click', ()=>{ clearAll(); window.scrollTo({top:0}); });
+
+  $('exampleBtn').addEventListener('click', ()=>{
+    clearAll();
+    $('name').value='Example — Thandi M. (fictional)'; $('title').value='Platform Engineer'; $('employer').value='Large SA bank';
+    $('years').value='4'; $('rate').value='R60k pm';
+    const pick={account:'nn',stream:'platform',rateHigh:'no',opsPlatform:'platform',selfservice:'yes',scale:'unsure',k8s:'advanced',crossplane:'used',iac:'strong',cloud:'deep',gitops:'yes',curiosity:'yes',devbg:'yes',employed:'yes',bootcamp:'no',buzzword:'no',adjacent:'no'};
+    const multi={clouds:['aws','azure'],langs:['python','go'],extras:['backstage','obs'],certs:['cka']};
+    Object.entries(pick).forEach(([g,v])=>{ const b=document.querySelector('.opts[data-g="'+g+'"] .opt[data-v="'+v+'"]'); if(b) b.click(); });
+    Object.entries(multi).forEach(([g,vs])=>vs.forEach(v=>{ const b=document.querySelector('.opts[data-g="'+g+'"] .opt[data-v="'+v+'"]'); if(b) b.click(); }));
+    render();
   });
 
-  document.getElementById('resetBtn').addEventListener('click', function(){
-    results.classList.remove('show');
-    form.reset();
-    document.querySelectorAll('.tile.selected, .pill.selected, .chk.selected').forEach(el=>el.classList.remove('selected'));
-    Object.keys(state).forEach(k=>{
-      if(state[k] instanceof Set) state[k].clear();
-      else state[k] = null;
-    });
-    window.scrollTo({ top:0, behavior: reducedMotion ? 'auto' : 'smooth' });
+  $('copyBtn').addEventListener('click', ()=>{
+    const t=$('copyOut'), btn=$('copyBtn');
+    const done=()=>{ btn.textContent='Copied'; setTimeout(()=>btn.textContent='Copy summary',1600); };
+    try{ navigator.clipboard.writeText(t.value).then(done).catch(()=>{ t.select(); btn.textContent='Selected — press Ctrl+C'; }); }
+    catch(e){ t.select(); btn.textContent='Selected — press Ctrl+C'; }
   });
 })();
 </script>
-
 </body>
 </html>
